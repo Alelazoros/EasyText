@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".DisplayMessages"
+        tools:context=".DispalayMessages.DisplayMessages"
 >
     <androidx.appcompat.widget.Toolbar
             android:id="@+id/tool_bar"
