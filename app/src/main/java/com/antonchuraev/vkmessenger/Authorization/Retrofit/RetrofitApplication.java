@@ -1,6 +1,5 @@
-package com.antonchuraev.vkmessenger.Authorization;
+package com.antonchuraev.vkmessenger.Authorization.Retrofit;
 
-import com.antonchuraev.vkmessenger.Requests.RetrofitInterfaces;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

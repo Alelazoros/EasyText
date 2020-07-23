@@ -7,8 +7,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
-import com.antonchuraev.vkmessenger.DispalayMessages.DisplayMessages;
-import com.antonchuraev.vkmessenger.MyClasses.VKAccount;
+import com.antonchuraev.vkmessenger.DisplayMessages.DisplayMessages;
+import com.antonchuraev.vkmessenger.MyClasses.VKUser.VKUserAccount;
 import com.antonchuraev.vkmessenger.R;
 import com.vk.api.sdk.VK;
 import com.vk.api.sdk.auth.VKAccessToken;
@@ -71,8 +71,8 @@ public class Authorization extends AppCompatActivity {
                 // User passed authorization
                 printDebugMessage(" // User passed authorization vkAccessToken == "+vkAccessToken.getAccessToken());
 
-                VKAccount vkAccount = new VKAccount(vkAccessToken.getAccessToken(),vkAccessToken.getUserId());
-                vkAccount.save(getApplicationContext());
+                VKUserAccount vkUserAccount = new VKUserAccount(vkAccessToken.getAccessToken(),vkAccessToken.getUserId());
+                vkUserAccount.save(getApplicationContext());
 
                 Intent displayMessages = new Intent(getBaseContext(), DisplayMessages.class);
                 startActivity(displayMessages);

@@ -5,16 +5,18 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-            android:name=".Authorization.RetrofitApplication"
+            android:name=".Authorization.Retrofit.RetrofitApplication"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity android:name=".DisplayMessages.OnlineFriends.MyListAdapter">
+        </activity>
         <activity android:name=".Authorization.Authorization">
         </activity>
-        <activity android:name=".DispalayMessages.DisplayMessages">
+        <activity android:name=".DisplayMessages.DisplayMessages">
         </activity>
         <activity android:name=".Authorization.MainActivity">
             <intent-filter>
