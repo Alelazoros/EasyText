@@ -1,6 +1,9 @@
 package com.antonchuraev.vkmessenger.DisplayMessages;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -17,7 +20,7 @@ import org.json.JSONObject;
 
 import static com.antonchuraev.vkmessenger.MyClasses.MyHelper.printDebugMessage;
 
-public class DisplayMessages extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class DisplayMessages extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener , AdapterView.OnItemClickListener {
 
 	ListView listView;
 
@@ -30,11 +33,10 @@ public class DisplayMessages extends AppCompatActivity implements SwipeRefreshLa
 		initialize();
 		VKOnlineFriendsRequest();
 
-		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
 		swipeRefreshLayout.setOnRefreshListener(this);
-		// делаем повеселее
 		swipeRefreshLayout.setColorScheme(R.color.colorPrimary);
 
+		listView.setOnItemClickListener(this);
 	}
 
 	private void VKOnlineFriendsRequest() {
@@ -82,6 +84,7 @@ public class DisplayMessages extends AppCompatActivity implements SwipeRefreshLa
 
 	private void initialize() {
 		listView = findViewById(R.id.list_view);
+		swipeRefreshLayout = findViewById(R.id.refresh);
 	}
 
 	@Override
@@ -89,5 +92,14 @@ public class DisplayMessages extends AppCompatActivity implements SwipeRefreshLa
 		swipeRefreshLayout.setRefreshing(true);
 		VKOnlineFriendsRequest();
 		swipeRefreshLayout.postDelayed(() -> swipeRefreshLayout.setRefreshing(false), 1500);
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		//TODO NEW ACTIVITY
+		Intent fullDialog = new Intent(this,FullDialog.class);
+
+		startActivity(fullDialog);
+
 	}
 }
