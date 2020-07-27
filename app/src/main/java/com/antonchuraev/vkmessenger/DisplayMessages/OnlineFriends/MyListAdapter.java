@@ -9,7 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.antonchuraev.vkmessenger.MyClasses.VKUser.VKUser;
+import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.Dialog;
+import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.DialogList;
 import com.antonchuraev.vkmessenger.R;
 import com.squareup.picasso.Picasso;
 
@@ -17,20 +18,23 @@ import java.util.List;
 
 public class MyListAdapter extends ArrayAdapter {
 
-	List<VKUser> users;
+
+	List<Dialog> dialogList;
 
 	TextView name;
-	ImageView photo;
+	TextView lastMessage;
 
+	ImageView photo;
 
 	Context context;
 	int resource;
 
-	public MyListAdapter(@NonNull Context context, int resource , @NonNull List<VKUser> users) {
-		super(context,resource, users);
+	public MyListAdapter(@NonNull Context context, int resource, DialogList dialog) {
+		super(context, resource, dialog.getDialogList());
 		this.context = context;
 		this.resource = resource;
-		this.users = users;
+
+		dialogList = dialog.getDialogList();
 	}
 
 	@NonNull
@@ -41,9 +45,12 @@ public class MyListAdapter extends ArrayAdapter {
 
 		name = view.findViewById(R.id.textViewUserName);
 		photo = view.findViewById(R.id.imageViewPhoto);
+		lastMessage = view.findViewById(R.id.textViewLastMessage);
 
-		name.setText(users.get(position).getFullName());
-		Picasso.get().load(users.get(position).getPhotoURL()).into(photo);
+		//TODO
+		name.setText(dialogList.get(position).getName());
+		lastMessage.setText(dialogList.get(position).getLastMessage());
+		Picasso.get().load(dialogList.get(position).getPhotoURL()).into(photo);
 
 		return view;
 	}

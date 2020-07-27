@@ -7,18 +7,16 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import com.antonchuraev.vkmessenger.Authorization.Authorization;
+import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.DialogList;
 import com.antonchuraev.vkmessenger.DisplayMessages.OnlineFriends.MyListAdapter;
-import com.antonchuraev.vkmessenger.MyClasses.VKUser.VKUsersList;
 import com.antonchuraev.vkmessenger.R;
 import com.vk.api.sdk.VK;
 import com.vk.api.sdk.VKApiCallback;
 import com.vk.api.sdk.requests.VKRequest;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static com.antonchuraev.vkmessenger.MyClasses.MyHelper.printDebugMessage;
 
 public class DisplayMessages extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener , AdapterView.OnItemClickListener {
 
@@ -31,7 +29,8 @@ public class DisplayMessages extends AppCompatActivity implements SwipeRefreshLa
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_messagers);
 		initialize();
-		VKOnlineFriendsRequest();
+		//VKOnlineFriendsRequest();
+		VKLastDialogsRequest();
 
 		swipeRefreshLayout.setOnRefreshListener(this);
 		swipeRefreshLayout.setColorScheme(R.color.colorPrimary);
@@ -39,39 +38,26 @@ public class DisplayMessages extends AppCompatActivity implements SwipeRefreshLa
 		listView.setOnItemClickListener(this);
 	}
 
-	private void VKOnlineFriendsRequest() {
-		VK.execute(new VKRequest<>("friends.getOnline"), new VKApiCallback<JSONObject>() {
+	private void VKLastDialogsRequest() {
+		VK.execute(new VKRequest("messages.getConversations").addParam("extended", 1).addParam("count", 200).addParam("fields", "photo_200"), new VKApiCallback<JSONObject>() {
 			@Override
 			public void fail(@NotNull Exception e) {
+				e.printStackTrace();
+				Intent authorization = new Intent(getApplicationContext(), Authorization.class);
+				startActivity(authorization);
 
 			}
 
 			@Override
 			public void success(JSONObject jsonObject) {
-				printDebugMessage("Success");
-
 				try {
-					VK.execute(new VKRequest("users.get").addParam("user_ids", jsonObject.getJSONArray("response").toString()).addParam("fields" , "photo_200"), new VKApiCallback<JSONObject>() {
-						@Override
-						public void fail(@NotNull Exception e) {
+					JSONObject response = jsonObject.getJSONObject("response");
 
-						}
+					DialogList lastConversations = new DialogList(response);
 
-						@Override
-						public void success(JSONObject jsonObject) {
+					MyListAdapter myListAdapter = new MyListAdapter(getApplicationContext(), R.layout.activity_my_list_adapter, lastConversations);
+					listView.setAdapter(myListAdapter);
 
-							try {
-								JSONArray onlineFriendsJSONArray = jsonObject.getJSONArray("response");
-								VKUsersList vkUsersList = new VKUsersList(onlineFriendsJSONArray);
-
-								MyListAdapter myListAdapter = new MyListAdapter(getApplicationContext(),R.layout.activity_my_list_adapter,vkUsersList.getVkUsers());
-								listView.setAdapter(myListAdapter);
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-
-						}
-					});
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -90,7 +76,7 @@ public class DisplayMessages extends AppCompatActivity implements SwipeRefreshLa
 	@Override
 	public void onRefresh() {
 		swipeRefreshLayout.setRefreshing(true);
-		VKOnlineFriendsRequest();
+		VKLastDialogsRequest();
 		swipeRefreshLayout.postDelayed(() -> swipeRefreshLayout.setRefreshing(false), 1500);
 	}
 
@@ -98,7 +84,6 @@ public class DisplayMessages extends AppCompatActivity implements SwipeRefreshLa
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		//TODO NEW ACTIVITY
 		Intent fullDialog = new Intent(this,FullDialog.class);
-
 		startActivity(fullDialog);
 
 	}

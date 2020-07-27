@@ -1,11 +1,11 @@
 package com.antonchuraev.vkmessenger.Authorization;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import com.antonchuraev.vkmessenger.DisplayMessages.DisplayMessages;
 import com.antonchuraev.vkmessenger.MyClasses.VKUser.VKUserAccount;
@@ -34,7 +34,8 @@ public class Authorization extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
 
         initialize();
-        buttonEnterAccount.setOnClickListener(v->{
+        authentication();
+        buttonEnterAccount.setOnClickListener(v -> {
             authentication();
         });
 
@@ -50,7 +51,7 @@ public class Authorization extends AppCompatActivity {
         permissionList.add(VKScope.FRIENDS);
         permissionList.add(VKScope.PAGES);
         permissionList.add(VKScope.STATUS);
-        //permissionList.add(VKScope.MESSAGES); //TODO GET ROOTS
+        permissionList.add(VKScope.MESSAGES); //TODO GET ROOTS
         permissionList.add(VKScope.OFFLINE);
         permissionList.add(VKScope.NOTIFICATIONS);
 
