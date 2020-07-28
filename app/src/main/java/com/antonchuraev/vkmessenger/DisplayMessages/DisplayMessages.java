@@ -8,6 +8,7 @@ import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.antonchuraev.vkmessenger.Authorization.Authorization;
+import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.Dialog;
 import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.DialogList;
 import com.antonchuraev.vkmessenger.DisplayMessages.OnlineFriends.MyListAdapter;
 import com.antonchuraev.vkmessenger.R;
@@ -83,7 +84,11 @@ public class DisplayMessages extends AppCompatActivity implements SwipeRefreshLa
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		//TODO NEW ACTIVITY
-		Intent fullDialog = new Intent(this,FullDialog.class);
+		Intent fullDialog = new Intent(this, FullDialog.class);
+		Dialog dialog = (Dialog) listView.getItemAtPosition(position);
+
+		fullDialog.putExtra("NAME", dialog.getName());
+		fullDialog.putExtra("PHOTO_URL", dialog.getPhotoURL());
 		startActivity(fullDialog);
 
 	}

@@ -33,7 +33,7 @@ public class Database {
 				return vkUsers.get(i);
 			}
 		}
-		return new VKUserOrGroup(0, "Пользователь не найден", "https://sun1-14.userapi.com/ZP_Is2oDNT71N-xal1NmPvQ6pPRCPfd5uTy6qg/LP1ZSjd2jx0.jpg?ava=1");
+		return new VKUserOrGroup(0, "Пользователь не найден", "https://vk.com/images/camera_200.png?ava=1");
 	}
 
 }

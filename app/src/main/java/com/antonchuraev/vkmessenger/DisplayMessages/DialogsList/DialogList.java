@@ -1,5 +1,6 @@
 package com.antonchuraev.vkmessenger.DisplayMessages.DialogsList;
 
+import com.antonchuraev.vkmessenger.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,22 +21,58 @@ public class DialogList {
 		JSONArray items = response.getJSONArray("items");
 
 		for (int i = 0; i < items.length(); i++) {
+			Dialog dialog = new Dialog();
+
 			JSONObject conversation = items.getJSONObject(i).getJSONObject("conversation");
 			JSONObject peer = conversation.getJSONObject("peer");
 			String type = peer.getString("type");
 
 			JSONObject last_message = items.getJSONObject(i).getJSONObject("last_message");
 			String text = last_message.getString("text");
-			Dialog dialog;
+
+			//TODO случай с вложением+сообщением
+			try {
+				if (text.equals("")) {
+					dialog.setMessageColor(R.color.colorPrimary);
+					text = "Сообщение";
+					JSONArray attachments = last_message.getJSONArray("attachments");
+					String attachmentsType = attachments.getJSONObject(0).getString("type");
+					switch (attachmentsType) {
+						case "wall":
+							text = "Запись на стене";
+							break;
+						case "call":
+							text = "Звонок";
+							break;
+						case "video":
+							text = "Видео";
+							break;
+						case "audio":
+							text = "Аудио";
+							break;
+						case "sticker":
+							text = "Стикер";
+							break;
+					}
+
+
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 
 			switch (type) {
 				case "user":
+
 				case "group":
 
-					long id = peer.getLong("id");
+					long id = peer.getLong("local_id");
 					VKUserOrGroup vkUser = database.searchById(id);
 
-					dialog = new Dialog(vkUser.getName(), vkUser.getPhotoURL(), text);
+					dialog.setName(vkUser.getName());
+					dialog.setPhotoURL(vkUser.getPhotoURL());
+					dialog.setLastMessage(text);
 
 					break;
 
@@ -46,23 +83,22 @@ public class DialogList {
 
 					String photo_200;
 
-					if (conversation.has("photo")) {
-						JSONObject photoURL = conversation.getJSONObject("photo");
+					if (chat_settings.has("photo")) {
+						JSONObject photoURL = chat_settings.getJSONObject("photo");
 						photo_200 = photoURL.getString("photo_200");
 					} else {
-						photo_200 = "https://sun1-14.userapi.com/ZP_Is2oDNT71N-xal1NmPvQ6pPRCPfd5uTy6qg/LP1ZSjd2jx0.jpg?ava=1";
+						photo_200 = "https://vk.com/images/camera_200.png?ava=1"; //TODO
 					}
 
-
-					dialog = new Dialog(title, photo_200, text);
+					dialog.setName(title);
+					dialog.setPhotoURL(photo_200);
+					dialog.setLastMessage(text);
 					break;
 
 				default:
 					throw new IllegalStateException("Unexpected value: " + type.toString());
 			}
 			dialogList.add(dialog);
-
-
 		}
 
 
