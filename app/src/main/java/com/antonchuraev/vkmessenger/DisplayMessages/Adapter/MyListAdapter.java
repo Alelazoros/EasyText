@@ -1,4 +1,4 @@
-package com.antonchuraev.vkmessenger.DisplayMessages.OnlineFriends;
+package com.antonchuraev.vkmessenger.DisplayMessages.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;

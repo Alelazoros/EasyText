@@ -7,7 +7,7 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import com.antonchuraev.vkmessenger.DisplayMessages.DisplayMessages;
+import com.antonchuraev.vkmessenger.DisplayMessages.AllDialogs;
 import com.antonchuraev.vkmessenger.MyClasses.VKUser.VKUserAccount;
 import com.antonchuraev.vkmessenger.R;
 import com.vk.api.sdk.VK;
@@ -75,7 +75,7 @@ public class Authorization extends AppCompatActivity {
                 VKUserAccount vkUserAccount = new VKUserAccount(vkAccessToken.getAccessToken(),vkAccessToken.getUserId());
                 vkUserAccount.save(getApplicationContext());
 
-                Intent displayMessages = new Intent(getBaseContext(), DisplayMessages.class);
+	            Intent displayMessages = new Intent(getBaseContext(), AllDialogs.class);
                 startActivity(displayMessages);
             }
         };

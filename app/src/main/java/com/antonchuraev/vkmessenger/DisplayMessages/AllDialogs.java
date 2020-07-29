@@ -8,9 +8,10 @@ import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.antonchuraev.vkmessenger.Authorization.Authorization;
+import com.antonchuraev.vkmessenger.DisplayMessages.Adapter.MyListAdapter;
 import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.Dialog;
 import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.DialogList;
-import com.antonchuraev.vkmessenger.DisplayMessages.OnlineFriends.MyListAdapter;
+import com.antonchuraev.vkmessenger.DisplayMessages.FullDialog.FullDialog;
 import com.antonchuraev.vkmessenger.R;
 import com.vk.api.sdk.VK;
 import com.vk.api.sdk.VKApiCallback;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DisplayMessages extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener , AdapterView.OnItemClickListener {
+public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
 
 	ListView listView;
 
@@ -89,6 +90,8 @@ public class DisplayMessages extends AppCompatActivity implements SwipeRefreshLa
 
 		fullDialog.putExtra("NAME", dialog.getName());
 		fullDialog.putExtra("PHOTO_URL", dialog.getPhotoURL());
+		fullDialog.putExtra("ID", dialog.getReceiverId());
+
 		startActivity(fullDialog);
 
 	}

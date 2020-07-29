@@ -30,6 +30,8 @@ public class DialogList {
 			JSONObject last_message = items.getJSONObject(i).getJSONObject("last_message");
 			String text = last_message.getString("text");
 
+			dialog.setReceiverId(peer.getLong("id")); //TODO USER/CHAT/GROUP
+
 			//TODO случай с вложением+сообщением
 			try {
 				if (text.equals("")) {

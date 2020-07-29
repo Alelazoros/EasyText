@@ -6,7 +6,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import com.antonchuraev.vkmessenger.Authorization.Retrofit.RetrofitApplication;
-import com.antonchuraev.vkmessenger.DisplayMessages.DisplayMessages;
+import com.antonchuraev.vkmessenger.DisplayMessages.AllDialogs;
 import com.antonchuraev.vkmessenger.MyClasses.VKUser.VKUserAccount;
 import com.antonchuraev.vkmessenger.R;
 import retrofit2.Call;
@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
 		RetrofitApplication.getApi().getUserDetails(vkUserAccount.access_token).enqueue(new Callback<VKUserAccount>() {
 			@Override
 			public void onResponse(Call<VKUserAccount> call, Response<VKUserAccount> response) {
-				printDebugMessage(" // User passed authorization access_token == "+ vkUserAccount.access_token);
-				Intent displayMessages = new Intent(getBaseContext(), DisplayMessages.class);
+				printDebugMessage(" // User passed authorization access_token == " + vkUserAccount.access_token);
+				Intent displayMessages = new Intent(getBaseContext(), AllDialogs.class);
 				startActivity(displayMessages);
 			}
 

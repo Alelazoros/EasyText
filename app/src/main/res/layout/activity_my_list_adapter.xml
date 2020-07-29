@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".DisplayMessages.OnlineFriends.MyListAdapter">
+        tools:context=".DisplayMessages.Adapter.MyListAdapter">
 
     <de.hdodenhof.circleimageview.CircleImageView
             android:src="@drawable/ic_launcher_background"

@@ -1,7 +1,7 @@
 package com.antonchuraev.vkmessenger.DisplayMessages.DialogsList;
 
 public class Dialog {
-
+	private long receiverId;
 	private String name;
 	private String lastMessage;
 	private int messageColor;
@@ -47,5 +47,13 @@ public class Dialog {
 
 	public void setPhotoURL(String photoURL) {
 		this.photoURL = photoURL;
+	}
+
+	public long getReceiverId() {
+		return receiverId;
+	}
+
+	public void setReceiverId(long receiverId) {
+		this.receiverId = receiverId;
 	}
 }
