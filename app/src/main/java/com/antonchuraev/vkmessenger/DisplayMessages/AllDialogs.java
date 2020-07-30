@@ -31,13 +31,14 @@ public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_messagers);
 		initialize();
-		//VKOnlineFriendsRequest();
+
 		VKLastDialogsRequest();
 
 		swipeRefreshLayout.setOnRefreshListener(this);
 		swipeRefreshLayout.setColorScheme(R.color.colorPrimary);
 
 		listView.setOnItemClickListener(this);
+
 	}
 
 	private void VKLastDialogsRequest() {

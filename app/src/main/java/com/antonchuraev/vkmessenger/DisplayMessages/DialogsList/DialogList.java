@@ -32,6 +32,7 @@ public class DialogList {
 
 			dialog.setReceiverId(peer.getLong("id")); //TODO USER/CHAT/GROUP
 
+
 			//TODO случай с вложением+сообщением
 			try {
 				if (text.equals("")) {
