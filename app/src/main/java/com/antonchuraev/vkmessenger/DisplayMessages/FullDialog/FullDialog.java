@@ -2,6 +2,7 @@ package com.antonchuraev.vkmessenger.DisplayMessages.FullDialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
@@ -25,7 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import static com.antonchuraev.vkmessenger.MyClasses.MyHelper.printDebugMessage;
+
 
 public class FullDialog extends AppCompatActivity {
 
@@ -73,8 +74,8 @@ public class FullDialog extends AppCompatActivity {
 
             @Override
             public void success(JSONObject jsonObject) {
-                printDebugMessage("success send");
-                inputMessage.setText(" ");
+	            Log.d("Easy Text", "success send");
+	            inputMessage.setText(" ");
 
                 showKeyboard(inputMessage);
 

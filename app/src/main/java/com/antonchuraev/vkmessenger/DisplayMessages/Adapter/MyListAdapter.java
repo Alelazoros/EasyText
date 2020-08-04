@@ -49,17 +49,19 @@ public class MyListAdapter extends ArrayAdapter {
 		photo = view.findViewById(R.id.imageViewPhoto);
 		lastMessage = view.findViewById(R.id.textViewLastMessage);
 
-		String lastMessageText = dialogList.get(position).getLastMessage();
+
+		Dialog dialog = dialogList.get(position);
+		String lastMessageText = dialog.getLastMessage();
 		lastMessageText = convertStringToMAX_LENGTH(lastMessageText);
 
-		name.setText(dialogList.get(position).getName());
+		name.setText(dialog.getName());
 		lastMessage.setText(lastMessageText);
 
-		if (dialogList.get(position).getMessageColor() != 0) {
-			lastMessage.setTextColor(getContext().getColor(dialogList.get(position).getMessageColor()));
+		if (dialog.getMessageColor() != 0) {
+			lastMessage.setTextColor(getContext().getColor(dialog.getMessageColor()));
 		}
 
-		Picasso.get().load(dialogList.get(position).getPhotoURL()).into(photo);
+		Picasso.get().load(dialog.getPhotoURL()).into(photo);
 
 		return view;
 	}

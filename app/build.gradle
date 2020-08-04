@@ -40,6 +40,8 @@ dependencies {
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
+    implementation "android.arch.paging:runtime:1.0.1" //??
+
     implementation 'com.vk:androidsdk:2.2.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

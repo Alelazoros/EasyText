@@ -2,6 +2,7 @@ package com.antonchuraev.vkmessenger.Authorization;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import androidx.annotation.Nullable;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.antonchuraev.vkmessenger.MyClasses.MyHelper.printDebugMessage;
+
 
 public class Authorization extends AppCompatActivity {
 
@@ -63,14 +64,14 @@ public class Authorization extends AppCompatActivity {
         VKAuthCallback callback = new VKAuthCallback (){
             @Override
             public void onLoginFailed(int i) {
-                printDebugMessage("// User didn't pass authorization repeat authentication");
+                Log.d(getResources().getString(R.string.app_name), "// User didn't pass authorization repeat authentication");
                 authentication();
             }
 
             @Override
             public void onLogin(@NotNull VKAccessToken vkAccessToken) {
                 // User passed authorization
-                printDebugMessage(" // User passed authorization vkAccessToken == "+vkAccessToken.getAccessToken());
+                Log.d(getResources().getString(R.string.app_name), " // User passed authorization vkAccessToken == " + vkAccessToken.getAccessToken());
 
                 VKUserAccount vkUserAccount = new VKUserAccount(vkAccessToken.getAccessToken(),vkAccessToken.getUserId());
                 vkUserAccount.save(getApplicationContext());
