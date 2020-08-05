@@ -20,11 +20,11 @@
             android:layout_marginBottom="5dp"
             app:layout_constraintVertical_bias="0.0"
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.0"
-            android:layout_marginStart="5dp"/>
+            android:layout_marginStart="10dp"/>
     <TextView
-            android:text="NAME"
+            tools:text="NAME"
             android:textColor="@color/colorDark"
-            android:textSize="15sp"
+            android:textSize="16sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewUserName"

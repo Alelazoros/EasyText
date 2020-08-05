@@ -23,18 +23,16 @@ public class MyListAdapter extends ArrayAdapter {
 
 	List<Dialog> dialogList;
 
-	TextView name;
-	TextView lastMessage;
-
-	ImageView photo;
-
-	Context context;
-	int resource;
+	private final Context context;
+	private final int resource;
+	private final LayoutInflater inflater;
 
 	public MyListAdapter(@NonNull Context context, int resource, DialogList dialog) {
 		super(context, resource, dialog.getDialogList());
 		this.context = context;
 		this.resource = resource;
+
+		inflater = LayoutInflater.from(context);
 
 		dialogList = dialog.getDialogList();
 	}
@@ -42,28 +40,55 @@ public class MyListAdapter extends ArrayAdapter {
 	@NonNull
 	@Override
 	public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-		LayoutInflater layoutInflater = LayoutInflater.from(context);
-		View view = layoutInflater.inflate(resource, null, false);
+		ViewHolder holder;
+		if (convertView == null) {
+			convertView = inflater.inflate(resource, parent, false);
+			holder = new ViewHolder();
 
-		name = view.findViewById(R.id.textViewUserName);
-		photo = view.findViewById(R.id.imageViewPhoto);
-		lastMessage = view.findViewById(R.id.textViewLastMessage);
+			holder.photo = convertView.findViewById(R.id.imageViewPhoto);
+			holder.name = convertView.findViewById(R.id.textViewUserName);
+			holder.lastMessage = convertView.findViewById(R.id.textViewLastMessage);
+
+			convertView.setTag(holder);
+
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
 
 
 		Dialog dialog = dialogList.get(position);
+
+
 		String lastMessageText = dialog.getLastMessage();
-		lastMessageText = convertStringToMAX_LENGTH(lastMessageText);
-
-		name.setText(dialog.getName());
-		lastMessage.setText(lastMessageText);
-
-		if (dialog.getMessageColor() != 0) {
-			lastMessage.setTextColor(getContext().getColor(dialog.getMessageColor()));
+		if (lastMessageText != null) {
+			lastMessageText = convertStringToMAX_LENGTH(lastMessageText);
 		}
 
-		Picasso.get().load(dialog.getPhotoURL()).into(photo);
+		holder.name.setText(dialog.getName());
+		if (dialog.isOnline()) {
+			holder.name.setTextColor(getContext().getColor(R.color.colorGreen)); //TODO
+		} else {
+			holder.name.setTextColor(getContext().getColor(R.color.colorDark));
+		}
 
-		return view;
+
+		holder.lastMessage.setText(lastMessageText);
+
+		if (dialog.getMessageColor() != 0) {
+			holder.lastMessage.setTextColor(getContext().getColor(dialog.getMessageColor()));
+		} else {
+			holder.lastMessage.setTextColor(getContext().getColor(R.color.colorDark));
+		}
+
+
+		if (dialog.getPhotoURL() != null) {
+			Picasso.get().load(dialog.getPhotoURL()).into(holder.photo);
+		} else { //Фото для тех у еого нет
+			Picasso.get().load("https://vk.com/images/camera_200.png?ava=1").into(holder.photo);
+		}
+
+
+		return convertView;
 	}
 
 	@NotNull
@@ -76,4 +101,11 @@ public class MyListAdapter extends ArrayAdapter {
 		}
 		return lastMessageText;
 	}
+
+	static class ViewHolder {
+		ImageView photo;
+		TextView name;
+		TextView lastMessage;
+	}
+
 }

@@ -1,5 +1,6 @@
 package com.antonchuraev.vkmessenger.DisplayMessages.DialogsList;
 
+import com.antonchuraev.vkmessenger.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,8 +13,6 @@ public class DialogList {
 	public List<Dialog> dialogList = new LinkedList<>();
 	Database database = new Database();
 
-	public DialogList() throws JSONException {
-	}
 
 	public void addToListFromJSONObject(JSONObject response) throws JSONException {
 		database.parseAndAddToDataBase(response);
@@ -21,22 +20,89 @@ public class DialogList {
 	}
 
 	private List parseListFromJSONObject(JSONObject response) throws JSONException {
-		List returnStatement = new LinkedList();
+		List dialogList = new LinkedList();
 
-		JSONArray items = response.getJSONArray("items");
+		if (response.has("items")) {
+			JSONArray items = response.getJSONArray("items");
+			for (int i = 0; i < items.length(); i++) {
+				JSONObject conversation = items.getJSONObject(i).getJSONObject("conversation");
+				JSONObject peer = conversation.getJSONObject("peer");
+				String type = peer.getString("type");
 
-		for (int i = 0; i < items.length(); i++) {
-			Dialog dialog = getDialogDate(items.getJSONObject(i));
-			returnStatement.add(dialog);
+				Dialog dialog = new Dialog();
+
+				//set all from "conversation"
+				switch (type) {
+					case "group":
+						DatabaseFormat databaseFormatGroup = database.findById(peer.getLong("local_id"));
+						dialog.setName(databaseFormatGroup.name);
+						dialog.setPhotoURL(databaseFormatGroup.photoURL);
+						break;
+					case "user":
+						DatabaseFormat databaseFormatUser = database.findById(peer.getLong("local_id"));
+						dialog.setName(databaseFormatUser.name);
+						dialog.setOnline(databaseFormatUser.online);
+						dialog.setPhotoURL(databaseFormatUser.photoURL);
+						break;
+					case "chat":
+						JSONObject chatSettings = conversation.getJSONObject("chat_settings");
+						dialog.setName(chatSettings.getString("title"));
+						dialog.setOnline(false);
+
+						if (chatSettings.has("photo")) {
+							dialog.setPhotoURL(chatSettings.getJSONObject("photo").getString("photo_200"));
+						}
+						break;
+				}
+
+
+				//set all from "last_message"
+				JSONObject lastMessage = items.getJSONObject(i).getJSONObject("last_message");
+				String text = lastMessage.getString("text");
+
+				if (!text.equals("")) {
+					dialog.setLastMessage(text);
+				} else {
+					JSONArray attachments = lastMessage.getJSONArray("attachments");
+					dialog.setMessageColor(R.color.colorPrimary);
+
+					if (attachments.length() > 0) {
+						String attachmentType = attachments.getJSONObject(0).getString("type");
+						switch (attachmentType) {
+							case "video":
+								dialog.setLastMessage("Видео");
+								break;
+							case "link":
+								dialog.setLastMessage("Ссылка");
+								break;
+							case "call":
+								dialog.setLastMessage("Звонок");
+								break;
+							case "photo":
+								dialog.setLastMessage("Фото");
+								break;
+							case "sticker":
+								dialog.setLastMessage("Стикер");
+								break;
+							case "audio":
+								dialog.setLastMessage("Аудио");
+								break;
+							case "audio_message":
+								dialog.setLastMessage("Голосовое сообщение");
+								break;
+						}
+					}
+				}
+
+
+				dialogList.add(dialog);
+			}
+
+
+			return dialogList;
 		}
-		return returnStatement;
-	}
 
-	private Dialog getDialogDate(JSONObject jsonObject) throws JSONException {
-		Dialog dialog = new Dialog();
-
-
-		return dialog;
+		return dialogList;
 	}
 
 

@@ -34,6 +34,8 @@ public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.
 
 	private int offset = 0;
 
+	boolean endReach = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -79,6 +81,7 @@ public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.
 					e.printStackTrace();
 				}
 				offset += 12; //TODO STOP INCREMENT AFTER REACHING THE END
+				endReach = false;
 			}
 		});
 	}
@@ -104,6 +107,11 @@ public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.
 		Log.d(TAG, "onRefresh");
 		swipeRefreshLayout.setRefreshing(true);
 		//TODO
+		lastConversations.dialogList.removeIf(x -> lastConversations.dialogList.indexOf(x) > 12);
+		myListAdapter.notifyDataSetChanged();
+		offset = 13;
+		VKLastDialogsRequest(offset);
+
 		swipeRefreshLayout.postDelayed(() -> swipeRefreshLayout.setRefreshing(false), 1500);
 	}
 
@@ -124,9 +132,10 @@ public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
 				&& (listView.getLastVisiblePosition() - listView.getHeaderViewsCount() -
-				listView.getFooterViewsCount()) >= (myListAdapter.getCount() - 1)) {
+				listView.getFooterViewsCount()) >= (myListAdapter.getCount() - 1) && !endReach) {
 
 			Log.d(TAG, " list end reached");
+			endReach = true;
 			VKLastDialogsRequest(offset);
 		}
 

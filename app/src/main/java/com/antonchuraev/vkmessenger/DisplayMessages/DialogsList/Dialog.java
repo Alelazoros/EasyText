@@ -3,19 +3,11 @@ package com.antonchuraev.vkmessenger.DisplayMessages.DialogsList;
 public class Dialog {
 	private long receiverId;
 	private String name;
-	private String lastMessage;
+	private String lastMessage = "Сообщение";
 	private int messageColor;
 	private String photoURL;
+	private boolean online;
 
-	public Dialog() {
-
-	}
-
-	public Dialog(String name, String photoURL, String lastMessage) {
-		this.name = name;
-		this.photoURL = photoURL;
-		this.lastMessage = lastMessage;
-	}
 
 	public String getName() {
 		return name;
@@ -55,5 +47,13 @@ public class Dialog {
 
 	public void setReceiverId(long receiverId) {
 		this.receiverId = receiverId;
+	}
+
+	public boolean isOnline() {
+		return online;
+	}
+
+	public void setOnline(boolean online) {
+		this.online = online;
 	}
 }
