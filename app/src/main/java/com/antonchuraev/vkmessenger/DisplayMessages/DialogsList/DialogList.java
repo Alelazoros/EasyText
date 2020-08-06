@@ -35,17 +35,20 @@ public class DialogList {
 				switch (type) {
 					case "group":
 						DatabaseFormat databaseFormatGroup = database.findById(peer.getLong("local_id"));
+						dialog.setType(Type.GROUP);
 						dialog.setName(databaseFormatGroup.name);
 						dialog.setPhotoURL(databaseFormatGroup.photoURL);
 						break;
 					case "user":
 						DatabaseFormat databaseFormatUser = database.findById(peer.getLong("local_id"));
+						dialog.setType(Type.USER);
 						dialog.setName(databaseFormatUser.name);
 						dialog.setOnline(databaseFormatUser.online);
 						dialog.setPhotoURL(databaseFormatUser.photoURL);
 						break;
 					case "chat":
 						JSONObject chatSettings = conversation.getJSONObject("chat_settings");
+						dialog.setType(Type.CHAT);
 						dialog.setName(chatSettings.getString("title"));
 						dialog.setOnline(false);
 
@@ -54,7 +57,7 @@ public class DialogList {
 						}
 						break;
 				}
-
+				dialog.setReceiverId(peer.getLong("local_id"));
 
 				//set all from "last_message"
 				JSONObject lastMessage = items.getJSONObject(i).getJSONObject("last_message");

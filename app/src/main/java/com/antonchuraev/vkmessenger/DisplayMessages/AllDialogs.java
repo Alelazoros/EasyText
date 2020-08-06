@@ -120,9 +120,11 @@ public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.
 		Intent fullDialog = new Intent(this, FullDialog.class);
 		Dialog dialog = (Dialog) listView.getItemAtPosition(position);
 
-		fullDialog.putExtra("NAME", dialog.getName());
+		/*fullDialog.putExtra("NAME", dialog.getName());
 		fullDialog.putExtra("PHOTO_URL", dialog.getPhotoURL());
-		fullDialog.putExtra("ID", dialog.getReceiverId());
+		fullDialog.putExtra("ID", dialog.getReceiverId());*/
+		fullDialog.putExtra("DIALOG", dialog);
+
 
 		startActivity(fullDialog);
 

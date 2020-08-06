@@ -14,62 +14,62 @@ import java.util.List;
 
 public class MyFullDialogAdapter extends ArrayAdapter {
 
-	List messagesList;
-	List<Long> from_IdList;
-	long id;
+	private final LayoutInflater inflater;
 
 	TextView RightMessageTextView;
 	TextView LeftMessageTextView;
 
 	Context context;
-	int resource;
+	List<Message> messagesList;
 
-	public MyFullDialogAdapter(@NonNull Context context, int resource, List messages, List from_IdList, long id) {
-		super(context, resource, messages);
+	public MyFullDialogAdapter(@NonNull Context context, List messages) {
+		super(context, R.layout.activity_my_full_dialog_list_adapter, messages);
 		this.context = context;
-		this.resource = resource;
 		this.messagesList = messages;
 
-		this.from_IdList = from_IdList;
-		this.id = id;
+
+		inflater = LayoutInflater.from(context);
 	}
 
 	@NonNull
 	@Override
 	public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-		LayoutInflater layoutInflater = LayoutInflater.from(context);
-		View view = layoutInflater.inflate(resource, null, false);
+		ViewHolder holder;
+		if (convertView == null) {
+			convertView = inflater.inflate(R.layout.activity_my_full_dialog_list_adapter, parent, false);
+			holder = new ViewHolder();
 
-		initialize(view);
+			holder.rightTextView = convertView.findViewById(R.id.textViewMessageRight);
+			holder.leftTextView = convertView.findViewById(R.id.textViewMessageLeft);
 
+			convertView.setTag(holder);
 
-		String text = messagesList.get(position).toString();
-
-		if (from_IdList.get(position) == id) {
-			intoLeftTextView(text);
 		} else {
-			intoRightTextView(text);
+			holder = (ViewHolder) convertView.getTag();
 		}
 
-		return view;
+		Message message = messagesList.get(position);
+
+		if (message.isYourMessage()) {
+			holder.leftTextView.setVisibility(View.INVISIBLE);
+			holder.rightTextView.setVisibility(View.VISIBLE);
+
+			holder.rightTextView.setText(message.getText());
+			holder.leftTextView.setText(null);
+		} else {
+			holder.rightTextView.setVisibility(View.INVISIBLE);
+			holder.leftTextView.setVisibility(View.VISIBLE);
+
+			holder.leftTextView.setText(message.getText());
+			holder.rightTextView.setText(null);
+		}
+
+		return convertView;
 	}
 
-	private void intoLeftTextView(String text) {
-		RightMessageTextView.setVisibility(View.INVISIBLE);
-		LeftMessageTextView.setText(text);
+
+	static class ViewHolder {
+		TextView rightTextView;
+		TextView leftTextView;
 	}
-
-
-	private void intoRightTextView(String text) {
-		LeftMessageTextView.setVisibility(View.INVISIBLE);
-		RightMessageTextView.setText(text);
-
-	}
-
-	private void initialize(View view) {
-		RightMessageTextView = view.findViewById(R.id.textViewMessageRight);
-		LeftMessageTextView = view.findViewById(R.id.textViewMessageLeft);
-	}
-
-
 }

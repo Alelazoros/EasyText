@@ -1,11 +1,20 @@
 package com.antonchuraev.vkmessenger.DisplayMessages.DialogsList;
 
-public class Dialog {
+import java.io.Serializable;
+
+enum Type {
+	USER,
+	CHAT,
+	GROUP
+}
+
+public class Dialog implements Serializable {
 	private long receiverId;
 	private String name;
 	private String lastMessage = "Сообщение";
 	private int messageColor;
 	private String photoURL;
+	private Type type;
 	private boolean online;
 
 
@@ -55,5 +64,27 @@ public class Dialog {
 
 	public void setOnline(boolean online) {
 		this.online = online;
+	}
+
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Dialog{" +
+				"receiverId=" + receiverId +
+				", name='" + name + '\'' +
+				", lastMessage='" + lastMessage + '\'' +
+				", messageColor=" + messageColor +
+				", photoURL='" + photoURL + '\'' +
+				", type=" + type +
+				", online=" + online +
+				'}';
 	}
 }
