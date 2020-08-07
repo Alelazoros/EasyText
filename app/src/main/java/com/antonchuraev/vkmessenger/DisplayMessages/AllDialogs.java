@@ -4,13 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.antonchuraev.vkmessenger.Authorization.Authorization;
-import com.antonchuraev.vkmessenger.DisplayMessages.Adapter.MyListAdapter;
+import com.antonchuraev.vkmessenger.DisplayMessages.Adapter.MyRecyclerAllDialogsAdapter;
 import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.Dialog;
 import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.DialogList;
 import com.antonchuraev.vkmessenger.DisplayMessages.FullDialog.FullDialog;
@@ -22,15 +20,15 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
+public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 	public final String TAG = "Easy Text";
 
-	ListView listView;
+	RecyclerView recyclerView;
 
 	SwipeRefreshLayout swipeRefreshLayout;
 
 	DialogList lastConversations;
-	MyListAdapter myListAdapter;
+	MyRecyclerAllDialogsAdapter myRecyclerAllDialogsAdapter;
 
 	private int offset = 0;
 
@@ -41,9 +39,7 @@ public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_messagers);
 		initialize();
-		setListeners();
-
-
+		listenersAction();
 	}
 
 	@Override
@@ -75,12 +71,11 @@ public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.
 				Log.d(TAG, "success VKLastDialogsRequest offset:" + offset);
 				try {
 					lastConversations.addToListFromJSONObject(jsonObject.getJSONObject("response"));
-					myListAdapter.notifyDataSetChanged();
-
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				offset += 12; //TODO STOP INCREMENT AFTER REACHING THE END
+				myRecyclerAllDialogsAdapter.notifyItemRangeInserted(offset, 12);
+				offset += 12;
 				endReach = false;
 			}
 		});
@@ -88,27 +83,47 @@ public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.
 
 
 	private void initialize() {
-		listView = findViewById(R.id.list_view);
+		recyclerView = findViewById(R.id.recycler_view);
 		swipeRefreshLayout = findViewById(R.id.refresh);
 		swipeRefreshLayout.setColorScheme(R.color.colorPrimary);
 		lastConversations = new DialogList();
-		myListAdapter = new MyListAdapter(getApplicationContext(), R.layout.activity_my_list_adapter, lastConversations);
-		listView.setAdapter(myListAdapter);
+		myRecyclerAllDialogsAdapter = new MyRecyclerAllDialogsAdapter(getApplicationContext(), lastConversations);
+		recyclerView.setAdapter(myRecyclerAllDialogsAdapter);
 	}
 
-	private void setListeners() {
+	private void listenersAction() {
 		swipeRefreshLayout.setOnRefreshListener(this);
-		listView.setOnItemClickListener(this);
-		listView.setOnScrollListener(this);
+		myRecyclerAllDialogsAdapter.setOnItemClickListener(new MyRecyclerAllDialogsAdapter.ClickListener() {
+			@Override
+			public void onItemClick(int position, View v) {
+				Log.d(TAG, " Item on position " + position + " clicked");
+				Intent fullDialog = new Intent(getApplicationContext(), FullDialog.class);
+				Dialog dialog = (Dialog) lastConversations.getDialogList().get(position);
+				fullDialog.putExtra("DIALOG", dialog);
+				startActivity(fullDialog);
+
+			}
+		});
+		recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+			@Override
+			public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+				if (!recyclerView.canScrollVertically(1) && !endReach) {
+					Log.d(TAG, "END REACHED");
+					endReach = true;
+					VKLastDialogsRequest(offset);
+				}
+
+			}
+		});
+
 	}
 
 	@Override
 	public void onRefresh() {
 		Log.d(TAG, "onRefresh");
 		swipeRefreshLayout.setRefreshing(true);
-		//TODO
 		lastConversations.dialogList.removeIf(x -> lastConversations.dialogList.indexOf(x) > 12);
-		myListAdapter.notifyDataSetChanged();
+		myRecyclerAllDialogsAdapter.notifyDataSetChanged();
 		offset = 13;
 		VKLastDialogsRequest(offset);
 
@@ -116,51 +131,10 @@ public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Intent fullDialog = new Intent(this, FullDialog.class);
-		Dialog dialog = (Dialog) listView.getItemAtPosition(position);
-
-		/*fullDialog.putExtra("NAME", dialog.getName());
-		fullDialog.putExtra("PHOTO_URL", dialog.getPhotoURL());
-		fullDialog.putExtra("ID", dialog.getReceiverId());*/
-		fullDialog.putExtra("DIALOG", dialog);
-
-
-		startActivity(fullDialog);
-
-	}
-
-	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
-		if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
-				&& (listView.getLastVisiblePosition() - listView.getHeaderViewsCount() -
-				listView.getFooterViewsCount()) >= (myListAdapter.getCount() - 1) && !endReach) {
-
-			Log.d(TAG, " list end reached");
-			endReach = true;
-			VKLastDialogsRequest(offset);
-		}
-
-	}
-
-	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		Log.d(TAG, "scroll: firstVisibleItem:" + firstVisibleItem
-				+ ", visibleItemCount:" + visibleItemCount
-				+ ", totalItemCount:" + totalItemCount
-				+ ", offset:" + offset);
-
-
-	}
-
-
-	@Override
 	protected void onPause() {
 		super.onPause();
 		Log.d(TAG, "onPause");
-		//TODO обрезание списка
 		lastConversations.dialogList.removeIf(x -> lastConversations.dialogList.indexOf(x) > 12);
-		myListAdapter.notifyDataSetChanged();
-
+		myRecyclerAllDialogsAdapter.notifyDataSetChanged();
 	}
 }

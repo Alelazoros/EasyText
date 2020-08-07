@@ -14,7 +14,7 @@
             android:theme="@style/AppTheme">
         <activity android:name=".DisplayMessages.FullDialog.FullDialog">
         </activity>
-        <activity android:name=".DisplayMessages.Adapter.MyListAdapter">
+        <activity android:name=".DisplayMessages.Adapter.MyRecyclerAllDialogsAdapter">
         </activity>
         <activity android:name=".Authorization.Authorization">
         </activity>

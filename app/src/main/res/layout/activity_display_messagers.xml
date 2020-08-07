@@ -20,21 +20,23 @@
     />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".DisplayMessages.AllDialogs"
     >
-        <ListView
-                android:dividerHeight="0dp"
+        <androidx.recyclerview.widget.RecyclerView
+                tools:listitem="@android:layout/simple_list_item_2"
+
+                android:focusable="true"
+                android:clickable="true"
+
+                app:layoutManager="LinearLayoutManager"
                 android:background="@color/colorWhite"
-                android:divider="@color/colorWhite"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:id="@+id/list_view"
+                android:id="@+id/recycler_view"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tool_bar"/>
 

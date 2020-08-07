@@ -1,13 +1,13 @@
 package com.antonchuraev.vkmessenger.DisplayMessages.FullDialog;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.Dialog;
 import com.antonchuraev.vkmessenger.R;
 import com.squareup.picasso.Picasso;
@@ -24,21 +24,22 @@ import java.util.List;
 import java.util.Random;
 
 
-public class FullDialog extends AppCompatActivity implements AbsListView.OnScrollListener {
+public class FullDialog extends AppCompatActivity {
 
     private static final String TAG = "EASY TEXT";
     androidx.appcompat.widget.Toolbar toolbar;
     List messages;
     MyFullDialogAdapter myFullDialogAdapter;
+    RecyclerView recyclerView;
+
     Dialog dialog;
-    private int messageId; //TODO
 
     ImageView photo;
-    ListView listView;
     EditText inputMessage;
     ImageButton sendMessage;
     private long id;
     private int offset = 0;
+
     private boolean endReached = false;
 
     @Override
@@ -55,13 +56,11 @@ public class FullDialog extends AppCompatActivity implements AbsListView.OnScrol
         Picasso.get().load(dialog.getPhotoURL()).into(photo);
 
         RequestMessages(offset);
+        listenerAction();
 
-        sendMessage.setOnClickListener(v -> {
-            if (inputMessage.getText() != null) {
-                VKSendMessage(inputMessage.getText().toString());
-            }
-        });
+    }
 
+    private void listenerAction() {
 
     }
 
@@ -88,10 +87,10 @@ public class FullDialog extends AppCompatActivity implements AbsListView.OnScrol
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         Message message = Message.getMessage(jsonArray.getJSONObject(i));
-                        messages.add(message);
+                        messages.add(0, message); //TODO
                     }
 
-                    myFullDialogAdapter.notifyDataSetChanged();
+                    myFullDialogAdapter.notifyDataSetChanged(); //TODO
 
                     offset += 20;
                     endReached = false;
@@ -115,7 +114,7 @@ public class FullDialog extends AppCompatActivity implements AbsListView.OnScrol
     private void initialize() {
         toolbar = findViewById(R.id.full_message_tool_bar);
         dialog = (Dialog) getIntent().getSerializableExtra("DIALOG");
-        listView = findViewById(R.id.list_view_messages);
+        recyclerView = findViewById(R.id.recycler_view_messages);
         photo = findViewById(R.id.full_dialog_photo);
 
         String type = String.valueOf(dialog.getType());
@@ -132,39 +131,23 @@ public class FullDialog extends AppCompatActivity implements AbsListView.OnScrol
         }
 
         inputMessage = findViewById(R.id.input_text_message);
-        sendMessage = findViewById(R.id.button_send_message);
 
         messages = new LinkedList();
 
         myFullDialogAdapter = new MyFullDialogAdapter(getApplicationContext(), messages);
-        listView.setAdapter(myFullDialogAdapter);
-        listView.setOnScrollListener(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
+        linearLayoutManager.setReverseLayout(false);
+        linearLayoutManager.setStackFromEnd(true);
+
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        recyclerView.setAdapter(myFullDialogAdapter);
     }
 
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
-                && (listView.getLastVisiblePosition() - listView.getHeaderViewsCount() -
-                listView.getFooterViewsCount()) >= (myFullDialogAdapter.getCount() - 1)) {
 
-            Log.d(TAG, " list end reached");
-        }
-    }
 
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        Log.d(TAG, "scroll: firstVisibleItem:" + firstVisibleItem
-                + ", visibleItemCount:" + visibleItemCount
-                + ", totalItemCount:" + totalItemCount
-                + ", offset:" + offset);
 
-        if (firstVisibleItem == 0 && visibleItemCount != 0 && !endReached) {
-            Log.d(TAG, " list start reached");
-            endReached = true;
-            RequestMessages(offset);
-        }
-
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -174,25 +157,5 @@ public class FullDialog extends AppCompatActivity implements AbsListView.OnScrol
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (getCurrentFocus() != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    public void showKeyboard(final EditText ettext) {
-        ettext.requestFocus();
-        ettext.postDelayed(new Runnable() {
-                               @Override
-                               public void run() {
-                                   InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                   keyboard.showSoftInput(ettext, 0);
-                               }
-                           }
-                , 1);
-    }
 
 }

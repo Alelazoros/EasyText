@@ -4,50 +4,35 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import com.antonchuraev.vkmessenger.R;
 
 import java.util.List;
 
-public class MyFullDialogAdapter extends ArrayAdapter {
+public class MyFullDialogAdapter extends RecyclerView.Adapter<MyFullDialogAdapter.ViewHolder> {
 
-	private final LayoutInflater inflater;
 
-	TextView RightMessageTextView;
-	TextView LeftMessageTextView;
-
-	Context context;
 	List<Message> messagesList;
+	private final LayoutInflater inflater;
+	Context context;
 
 	public MyFullDialogAdapter(@NonNull Context context, List messages) {
-		super(context, R.layout.activity_my_full_dialog_list_adapter, messages);
-		this.context = context;
 		this.messagesList = messages;
-
-
 		inflater = LayoutInflater.from(context);
+		this.context = context;
 	}
 
 	@NonNull
 	@Override
-	public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-		ViewHolder holder;
-		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.activity_my_full_dialog_list_adapter, parent, false);
-			holder = new ViewHolder();
+	public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+		View view = inflater.inflate(R.layout.activity_my_full_dialog_list_adapter, parent, false);
+		return new MyFullDialogAdapter.ViewHolder(view);
+	}
 
-			holder.rightTextView = convertView.findViewById(R.id.textViewMessageRight);
-			holder.leftTextView = convertView.findViewById(R.id.textViewMessageLeft);
-
-			convertView.setTag(holder);
-
-		} else {
-			holder = (ViewHolder) convertView.getTag();
-		}
-
+	@Override
+	public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 		Message message = messagesList.get(position);
 
 		if (message.isYourMessage()) {
@@ -64,12 +49,23 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 			holder.rightTextView.setText(null);
 		}
 
-		return convertView;
+	}
+
+	@Override
+	public int getItemCount() {
+		return messagesList.size();
 	}
 
 
-	static class ViewHolder {
+	static class ViewHolder extends RecyclerView.ViewHolder {
 		TextView rightTextView;
 		TextView leftTextView;
+
+
+		public ViewHolder(@NonNull View itemView) {
+			super(itemView);
+			rightTextView = itemView.findViewById(R.id.textViewMessageRight);
+			leftTextView = itemView.findViewById(R.id.textViewMessageLeft);
+		}
 	}
 }
