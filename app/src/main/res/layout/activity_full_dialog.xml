@@ -36,10 +36,8 @@
 
             android:background="@color/colorWhite"
 
-            android:stackFromBottom="true"
             android:layout_width="match_parent"
-            android:layout_height="504dp"
-
+            android:layout_height="match_parent"
 
             android:id="@+id/recycler_view_messages"
             app:layout_constraintEnd_toEndOf="parent"

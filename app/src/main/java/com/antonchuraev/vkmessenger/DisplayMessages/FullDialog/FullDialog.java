@@ -1,10 +1,12 @@
 package com.antonchuraev.vkmessenger.DisplayMessages.FullDialog;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -61,7 +63,24 @@ public class FullDialog extends AppCompatActivity {
     }
 
     private void listenerAction() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
 
+                if (!recyclerView.canScrollVertically(-1) && !endReached) {
+                    Log.d(TAG, "END REACHED");
+                    endReached = true;
+                    RequestMessages(offset);
+                }
+
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
     }
 
     private void VKSendMessage(String text) {
@@ -82,12 +101,13 @@ public class FullDialog extends AppCompatActivity {
         VK.execute(new VKRequest("messages.getHistory").addParam("count", 20).addParam("peer_id", dialog.getReceiverId()).addParam("offset", offsetT).addParam("start_message_id", -1), new VKApiCallback<JSONObject>() {
             @Override
             public void success(JSONObject jsonObject) {
+                Log.d(TAG, " Success RequestMessages offsetT = " + offsetT);
                 try {
                     JSONArray jsonArray = jsonObject.getJSONObject("response").getJSONArray("items");
 
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        Message message = Message.getMessage(jsonArray.getJSONObject(i));
-                        messages.add(0, message); //TODO
+                        Message message = Message.setMessage(jsonArray.getJSONObject(i));
+                        messages.add(message); //TODO
                     }
 
                     myFullDialogAdapter.notifyDataSetChanged(); //TODO
@@ -137,8 +157,8 @@ public class FullDialog extends AppCompatActivity {
         myFullDialogAdapter = new MyFullDialogAdapter(getApplicationContext(), messages);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 
-        linearLayoutManager.setReverseLayout(false);
-        linearLayoutManager.setStackFromEnd(true);
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(false);
 
         recyclerView.setLayoutManager(linearLayoutManager);
 

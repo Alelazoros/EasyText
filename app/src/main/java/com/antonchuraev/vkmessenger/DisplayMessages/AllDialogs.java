@@ -122,10 +122,11 @@ public class AllDialogs extends AppCompatActivity implements SwipeRefreshLayout.
 	public void onRefresh() {
 		Log.d(TAG, "onRefresh");
 		swipeRefreshLayout.setRefreshing(true);
-		lastConversations.dialogList.removeIf(x -> lastConversations.dialogList.indexOf(x) > 12);
-		myRecyclerAllDialogsAdapter.notifyDataSetChanged();
-		offset = 13;
-		VKLastDialogsRequest(offset);
+
+		lastConversations.dialogList.clear();
+		offset = 0;
+		//VKLastDialogsRequest(offset = 0);
+		myRecyclerAllDialogsAdapter.notifyDataSetChanged(); //TODO REQUEST AND ANSWER UPDATE ITEM AT RECYCLER VIEW
 
 		swipeRefreshLayout.postDelayed(() -> swipeRefreshLayout.setRefreshing(false), 1500);
 	}
