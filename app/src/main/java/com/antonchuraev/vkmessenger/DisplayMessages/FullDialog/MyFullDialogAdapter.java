@@ -39,11 +39,9 @@ public class MyFullDialogAdapter extends RecyclerView.Adapter<MyFullDialogAdapte
 	public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 		Message message = messagesList.get(position);
 
-		holder.textView.setVisibility(View.INVISIBLE);
-
 		TextView textField = holder.getTextView(context, message.isYourMessage());
-		if (message.getText() != null && !message.getText().equals("")) {
-			textField.setVisibility(View.VISIBLE);
+
+		if (!message.getText().equals("")) {
 			textField.setText(message.getText());
 		}
 
@@ -54,9 +52,11 @@ public class MyFullDialogAdapter extends RecyclerView.Adapter<MyFullDialogAdapte
 				String attachmentType = String.valueOf(attachment.attachmentType);
 				switch (attachmentType) {
 					case "PHOTO":
+						textField.setBackgroundColor(context.getColor(R.color.colorWhite));
 						if (!holder.displaysExtraImageView()) {
-							holder.addExtraImageView();
+							holder.addExtraImageView(message.isYourMessage());
 						}
+
 						Picasso.get().load(attachment.attachment.toString()).into(holder.extraImageView);
 
 						break;
@@ -101,14 +101,14 @@ public class MyFullDialogAdapter extends RecyclerView.Adapter<MyFullDialogAdapte
 
 		public TextView getTextView(Context context, boolean isYourMessage) {
 			textView.setBackground(isYourMessage ? context.getDrawable(R.drawable.right_dialog) : context.getDrawable(R.drawable.left_dialog));
-			constraintSet.setHorizontalBias(textView.getId(), isYourMessage ? 1F : 0F);
-			constraintLayout.setConstraintSet(constraintSet);
+			setBias(textView, isYourMessage);
 			return textView;
 		}
 
-		public void addExtraImageView() {
+		public void addExtraImageView(boolean isYourMessage) {
 			extraImageView.setId(View.generateViewId());
 			((ViewGroup) itemView).addView(extraImageView);
+			//setBias(extraImageView , isYourMessage);
 			viewAdded = true;
 		}
 
@@ -120,5 +120,11 @@ public class MyFullDialogAdapter extends RecyclerView.Adapter<MyFullDialogAdapte
 		public boolean displaysExtraImageView() {
 			return viewAdded;
 		}
+
+		private void setBias(View view, boolean isYourMessage) {
+			constraintSet.setHorizontalBias(view.getId(), isYourMessage ? 1F : 0F);
+			constraintLayout.setConstraintSet(constraintSet);
+		}
+
 	}
 }

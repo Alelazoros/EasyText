@@ -17,6 +17,7 @@
 >
 
     <TextView
+
             android:id="@+id/textViewMessage"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
@@ -40,16 +41,16 @@
             app:layout_constraintHorizontal_bias="0.5"
             android:layout_marginEnd="5dp"/>
     <ImageView
+            tools:src="@android:drawable/zoom_plate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
+
 
             android:id="@+id/imageView_full_dialog"
-            app:layout_constraintStart_toStartOf="@+id/textViewMessage"
-            android:layout_marginStart="5dp"
-            app:layout_constraintEnd_toEndOf="@+id/textViewMessage"
             app:layout_constraintTop_toBottomOf="@+id/textViewMessage"
-            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="5dp"/>
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="5dp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp" app:layout_constraintEnd_toEndOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
