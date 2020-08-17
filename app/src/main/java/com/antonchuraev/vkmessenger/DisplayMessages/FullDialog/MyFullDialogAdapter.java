@@ -39,7 +39,8 @@ public class MyFullDialogAdapter extends RecyclerView.Adapter<MyFullDialogAdapte
 		Message message = messagesList.get(position);
 
 		holder.textView.setVisibility(View.INVISIBLE);
-		//holder.imageView.setVisibility(View.INVISIBLE);
+
+		holder.imageView.setVisibility(View.GONE);
 
 		TextView textField = holder.getTextView(context, message.isYourMessage());
 		if (message.getText() != null && !message.getText().equals("")) {
@@ -51,12 +52,12 @@ public class MyFullDialogAdapter extends RecyclerView.Adapter<MyFullDialogAdapte
 		if (message.isHasAttachment()) {
 			for (int i = 0; i < message.getAttachmentList().size(); i++) { //TODO NULL IN ATTACHMENT TYPE
 				Attachment attachment = message.getAttachmentList().get(i);
+				System.out.println(attachment);
 				String attachmentType = String.valueOf(attachment.attachmentType);
 				switch (attachmentType) {
 					case "PHOTO":
 						holder.imageView.setVisibility(View.VISIBLE);
-						ImageView imageView = holder.getImageView(context, message.isYourMessage());
-						Picasso.get().load(attachment.attachment.toString()).into(imageView);
+						Picasso.get().load(attachment.attachment.toString()).into(holder.imageView);
 						break;
 				}
 
@@ -77,12 +78,10 @@ public class MyFullDialogAdapter extends RecyclerView.Adapter<MyFullDialogAdapte
 		ImageView imageView; //TODO
 
 		ConstraintLayout constraintLayout;
-		ConstraintLayout.LayoutParams constraintLayoutParams;
 
 		public ViewHolder(@NonNull View itemView) {
 			super(itemView);
 			constraintLayout = itemView.findViewById(R.id.constraint_layout_message);
-			constraintLayoutParams = (ConstraintLayout.LayoutParams) constraintLayout.getLayoutParams();
 
 			textView = itemView.findViewById(R.id.textViewMessage);
 			imageView = itemView.findViewById(R.id.imageView_full_dialog);
@@ -90,19 +89,9 @@ public class MyFullDialogAdapter extends RecyclerView.Adapter<MyFullDialogAdapte
 
 		public TextView getTextView(Context context, boolean isYourMessage) {
 			textView.setBackground(isYourMessage ? context.getDrawable(R.drawable.right_dialog) : context.getDrawable(R.drawable.left_dialog));
-			setGravity(isYourMessage);
 			return textView;
 		}
 
-		public ImageView getImageView(Context context, boolean isYouMessage) {
-			setGravity(isYouMessage);
-			return imageView;
-		}
-
-		public void setGravity(boolean isYourMessage) {
-			constraintLayoutParams.verticalBias = isYourMessage ? 100 : 0;
-			constraintLayout.setLayoutParams(constraintLayoutParams);
-		}
 
 	}
 }
