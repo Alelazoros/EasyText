@@ -1,130 +1,80 @@
 package com.antonchuraev.vkmessenger.DisplayMessages.FullDialog;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.recyclerview.widget.RecyclerView;
 import com.antonchuraev.vkmessenger.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class MyFullDialogAdapter extends RecyclerView.Adapter<MyFullDialogAdapter.ViewHolder> {
+public class MyFullDialogAdapter extends ArrayAdapter {
+	public static final String TAG = "EASY TEXT";
+	float scale;
 
 	List<Message> messagesList;
-	private final LayoutInflater inflater;
 	Context context;
 
+	ConstraintLayout constraintLayout;
 
 	public MyFullDialogAdapter(@NonNull Context context, List messages) {
+		super(context, R.layout.activity_my_full_dialog_list_adapter, messages);
 		this.messagesList = messages;
-		inflater = LayoutInflater.from(context);
 		this.context = context;
+		scale = context.getResources().getDisplayMetrics().density;
 	}
 
 	@NonNull
 	@Override
-	public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+	public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+		LayoutInflater inflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.activity_my_full_dialog_list_adapter, parent, false);
-		return new MyFullDialogAdapter.ViewHolder(view);
-	}
 
-	@Override
-	public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-		Message message = messagesList.get(position);
+		constraintLayout = view.findViewById(R.id.constraint_layout_message);
 
-		TextView textField = holder.getTextView(context, message.isYourMessage());
+		Message message = messagesList.get(messagesList.size() - 1 - position); //WORK
 
 		if (!message.getText().equals("")) {
-			textField.setText(message.getText());
+			addTextViewWithText(constraintLayout, message.getText(), message.isYourMessage());
 		}
-
 
 		if (message.isHasAttachment()) {
-			for (int i = 0; i < message.getAttachmentList().size(); i++) { //TODO NULL IN ATTACHMENT TYPE
-				Attachment attachment = message.getAttachmentList().get(i);
-				String attachmentType = String.valueOf(attachment.attachmentType);
-				switch (attachmentType) {
-					case "PHOTO":
-						textField.setBackgroundColor(context.getColor(R.color.colorWhite));
-						if (!holder.displaysExtraImageView()) {
-							holder.addExtraImageView(message.isYourMessage());
-						}
-
-						Picasso.get().load(attachment.attachment.toString()).into(holder.extraImageView);
-
-						break;
-				}
-
-			}
-		} else {
-			if (holder.displaysExtraImageView()) {
-				holder.removeExtraImageView();
-			}
-
+			//TODO
 		}
 
 
+		return view;
 	}
 
-	@Override
-	public int getItemCount() {
-		return messagesList.size();
+	private void addTextViewWithText(ConstraintLayout layout, String text, boolean isYourMessage) {
+		TextView messageTextView = getCustomTextView(context, isYourMessage, text);
+		layout.addView(messageTextView);
+	}
+
+	private TextView getCustomTextView(Context context, boolean isYourMessage, String text) {
+		TextView textView = new TextView(context);
+		textView.setBackground(context.getDrawable(isYourMessage ? R.drawable.right_dialog : R.drawable.left_dialog));
+		textView.setTextSize(16);
+		textView.setText(text);
+		textView.setTextColor(Color.DKGRAY);
+		final int paddingVertical = 13;
+		final int paddingHorizontal = 8;
+		textView.setPadding(getDP(paddingVertical), getDP(paddingHorizontal), getDP(paddingVertical), getDP(paddingHorizontal));
+		textView.setGravity(View.TEXT_ALIGNMENT_TEXT_START);
+		textView.setMaxWidth(getDP(350));
+
+		return textView;
 	}
 
 
-	static class ViewHolder extends RecyclerView.ViewHolder {
-		TextView textView;
-
-		ConstraintLayout constraintLayout;
-		ConstraintSet constraintSet;
-
-		ImageView extraImageView;
-		boolean viewAdded = false;
-
-		public ViewHolder(@NonNull View itemView) {
-			super(itemView);
-			constraintLayout = itemView.findViewById(R.id.constraint_layout_message);
-			textView = itemView.findViewById(R.id.textViewMessage);
-
-			extraImageView = new ImageView(itemView.getContext());
-
-			constraintSet = new ConstraintSet();
-			constraintSet.clone(constraintLayout);
-		}
-
-		public TextView getTextView(Context context, boolean isYourMessage) {
-			textView.setBackground(isYourMessage ? context.getDrawable(R.drawable.right_dialog) : context.getDrawable(R.drawable.left_dialog));
-			setBias(textView, isYourMessage);
-			return textView;
-		}
-
-		public void addExtraImageView(boolean isYourMessage) {
-			extraImageView.setId(View.generateViewId());
-			((ViewGroup) itemView).addView(extraImageView);
-			//setBias(extraImageView , isYourMessage);
-			viewAdded = true;
-		}
-
-		public void removeExtraImageView() {
-			((ViewGroup) itemView).removeView(extraImageView);
-			viewAdded = false;
-		}
-
-		public boolean displaysExtraImageView() {
-			return viewAdded;
-		}
-
-		private void setBias(View view, boolean isYourMessage) {
-			constraintSet.setHorizontalBias(view.getId(), isYourMessage ? 1F : 0F);
-			constraintLayout.setConstraintSet(constraintSet);
-		}
-
+	private int getDP(int i) {
+		return (int) (i * scale + 0.5f);
 	}
 }

@@ -1,15 +1,11 @@
 package com.antonchuraev.vkmessenger.DisplayMessages.FullDialog;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import androidx.annotation.NonNull;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.Dialog;
 import com.antonchuraev.vkmessenger.R;
 import com.squareup.picasso.Picasso;
@@ -32,7 +28,7 @@ public class FullDialog extends AppCompatActivity {
     androidx.appcompat.widget.Toolbar toolbar;
     List messages;
     MyFullDialogAdapter myFullDialogAdapter;
-    RecyclerView recyclerView;
+    ListView listView;
 
     Dialog dialog;
 
@@ -43,6 +39,7 @@ public class FullDialog extends AppCompatActivity {
     private int offset = 0;
 
     private boolean endReached = false;
+    Parcelable state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,22 +60,23 @@ public class FullDialog extends AppCompatActivity {
     }
 
     private void listenerAction() {
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        //TODO
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                if (!recyclerView.canScrollVertically(-1) && !endReached) {
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (!view.canScrollVertically(-1) && !endReached) {
                     Log.d(TAG, "END REACHED");
                     endReached = true;
-                    RequestMessages(offset);
-                }
 
+                    RequestMessages(offset);
+
+                    listView.onRestoreInstanceState(state);
+                }
             }
 
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
             }
         });
     }
@@ -107,13 +105,16 @@ public class FullDialog extends AppCompatActivity {
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         Message message = Message.setMessage(jsonArray.getJSONObject(i));
-                        messages.add(message); //TODO
+                        messages.add(message);
                     }
 
                     myFullDialogAdapter.notifyDataSetChanged(); //TODO
 
                     offset += 20;
                     endReached = false;
+
+                    state = listView.onSaveInstanceState();
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -134,7 +135,7 @@ public class FullDialog extends AppCompatActivity {
     private void initialize() {
         toolbar = findViewById(R.id.full_message_tool_bar);
         dialog = (Dialog) getIntent().getSerializableExtra("DIALOG");
-        recyclerView = findViewById(R.id.recycler_view_messages);
+        listView = findViewById(R.id.list_view_messages);
         photo = findViewById(R.id.full_dialog_photo);
 
         String type = String.valueOf(dialog.getType());
@@ -155,14 +156,7 @@ public class FullDialog extends AppCompatActivity {
         messages = new LinkedList();
 
         myFullDialogAdapter = new MyFullDialogAdapter(getApplicationContext(), messages);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-
-        linearLayoutManager.setReverseLayout(true);
-        linearLayoutManager.setStackFromEnd(false);
-
-        recyclerView.setLayoutManager(linearLayoutManager);
-
-        recyclerView.setAdapter(myFullDialogAdapter);
+        listView.setAdapter(myFullDialogAdapter);
     }
 
 
@@ -176,6 +170,5 @@ public class FullDialog extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 }
