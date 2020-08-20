@@ -1,7 +1,10 @@
 package com.antonchuraev.vkmessenger.DisplayMessages.FullDialog;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +30,8 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 	ConstraintLayout constraintLayout;
 	ConstraintSet constraintSet;
 
+	TextView messageTextView;
+
 	public MyFullDialogAdapter(@NonNull Context context, List messages) {
 		super(context, R.layout.activity_my_full_dialog_list_adapter, messages);
 		this.messagesList = messages;
@@ -48,12 +53,24 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 		Message message = messagesList.get(messagesList.size() - 1 - position); //WORK
 
 		if (!message.getText().equals("")) {
-			addTextViewWithText(constraintLayout, message);
+			messageTextView = addTextViewWithText(constraintLayout, message);
+
+			if (message.getText().startsWith("https")) {
+				messageTextView.setClickable(true);
+				messageTextView.setTextColor(Color.BLUE);
+				messageTextView.setPaintFlags(messageTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
+				messageTextView.setOnClickListener(v -> {
+					Intent openUrl = new Intent(Intent.ACTION_VIEW);
+					openUrl.setData(Uri.parse(messageTextView.getText().toString()));
+					openUrl.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					context.startActivity(openUrl);
+				});
+			}
+
 		}
 
 		if (message.isHasAttachment()) {
-			//TODO
-			System.out.println(message.toString());
 
 			for (int i = 0; i < message.getAttachmentList().size(); i++) {
 				Attachment attachment = message.getAttachmentList().get(i);
@@ -64,7 +81,7 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 						case "CALL":
 						case "LINK":
 						case "PHOTO":
-							addImageView(constraintLayout, attachment, message.isYourMessage());
+							addImageView(constraintLayout, attachment, message.isYourMessage(), messageTextView);
 							break;
 
 						case "STICKER":
@@ -83,20 +100,31 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 		return view;
 	}
 
-	private void addImageView(ConstraintLayout layout, Attachment attachment, boolean isYourMessage) {
+	private void addImageView(ConstraintLayout layout, Attachment attachment, boolean isYourMessage, TextView messageTextView) {
 		ImageView imageView = getImageView(context, isYourMessage);
 		Picasso.get().load(attachment.attachment.toString()).into(imageView);
 		layout.addView(imageView);
+
+
+		constraintSet.clone(constraintLayout);
+		if (messageTextView != null) {
+			constraintSet.connect(imageView.getId(), ConstraintSet.TOP, messageTextView.getId(), ConstraintSet.BOTTOM, getDP(8));
+		}
+		constraintSet.connect(imageView.getId(), ConstraintSet.LEFT, constraintLayout.getId(), ConstraintSet.LEFT);
+		constraintSet.connect(imageView.getId(), ConstraintSet.RIGHT, constraintLayout.getId(), ConstraintSet.RIGHT);
+		constraintSet.setHorizontalBias(imageView.getId(), isYourMessage ? 1f : 0F);
+		constraintSet.applyTo(constraintLayout);
+
 	}
 
 	private ImageView getImageView(Context context, boolean isYourMessage) {
 		ImageView imageView = new ImageView(context);
-
+		imageView.setId(View.generateViewId());
 
 		return imageView;
 	}
 
-	private void addTextViewWithText(ConstraintLayout layout, Message message) {
+	private TextView addTextViewWithText(ConstraintLayout layout, Message message) {
 		TextView messageTextView = getCustomTextView(context, message.isYourMessage(), message.getText());
 
 		layout.addView(messageTextView);
@@ -104,9 +132,10 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 		constraintSet.clone(constraintLayout);
 		constraintSet.connect(messageTextView.getId(), ConstraintSet.LEFT, constraintLayout.getId(), ConstraintSet.LEFT);
 		constraintSet.connect(messageTextView.getId(), ConstraintSet.RIGHT, constraintLayout.getId(), ConstraintSet.RIGHT);
-		constraintSet.setHorizontalBias(messageTextView.getId(), message.isYourMessage() ? 0f : 1F);
+		constraintSet.setHorizontalBias(messageTextView.getId(), message.isYourMessage() ? 1f : 0F);
 		constraintSet.applyTo(constraintLayout);
 
+		return messageTextView;
 	}
 
 	private TextView getCustomTextView(Context context, boolean isYourMessage, String text) {
