@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import com.antonchuraev.vkmessenger.R;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -74,12 +75,14 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 
 			for (int i = 0; i < message.getAttachmentList().size(); i++) {
 				Attachment attachment = message.getAttachmentList().get(i);
-				if (attachment.attachment != null) {  //TODO????
+				if (attachment.attachment != null) {  //TODO PROCESSING ALL TYPES
 
 					String attachmentType = attachment.attachmentType.toString();
 					switch (attachmentType) {
 						case "CALL":
-						case "LINK":
+						case "AUDIO":
+							addAudioPlayer(constraintLayout, attachment);
+
 						case "PHOTO":
 							addImageView(constraintLayout, attachment, message.isYourMessage(), messageTextView);
 							break;
@@ -100,9 +103,29 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 		return view;
 	}
 
+	private void addAudioPlayer(ConstraintLayout constraintLayout, Attachment attachment) {
+		//TODO ADD AUDIO PLAYER
+		TextView textView = new TextView(context);
+		textView.setText(attachment.toString());
+		textView.setId(View.generateViewId());
+
+		constraintLayout.addView(textView);
+
+	}
+
 	private void addImageView(ConstraintLayout layout, Attachment attachment, boolean isYourMessage, TextView messageTextView) {
 		ImageView imageView = getImageView(context, isYourMessage);
-		Picasso.get().load(attachment.attachment.toString()).into(imageView);
+		Picasso.get().load(attachment.attachment.toString()).into(imageView, new Callback() {
+			@Override
+			public void onSuccess() {
+				notifyDataSetChanged();
+			}
+
+			@Override
+			public void onError(Exception e) {
+
+			}
+		});
 		layout.addView(imageView);
 
 

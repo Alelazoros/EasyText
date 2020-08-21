@@ -60,7 +60,6 @@ public class FullDialog extends AppCompatActivity {
     }
 
     private void listenerAction() {
-        //TODO
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -108,7 +107,7 @@ public class FullDialog extends AppCompatActivity {
                         messages.add(message);
                     }
 
-                    myFullDialogAdapter.notifyDataSetChanged(); //TODO
+                    myFullDialogAdapter.notifyDataSetChanged(); //TODO BETTER WAY TO UPDATE LISTVIEW
 
                     offset += 20;
                     endReached = false;

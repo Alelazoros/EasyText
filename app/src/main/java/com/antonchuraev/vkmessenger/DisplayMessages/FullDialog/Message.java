@@ -7,13 +7,14 @@ import org.json.JSONObject;
 import java.util.LinkedList;
 import java.util.List;
 
-enum AttachmentType {
-	PHOTO, //TODO
-	LINK, //TODO
-	VOICE_MESSAGE, //TODO
-	CALL, //TODO
-	STICKER,  //TODO
-	FORWARDED_MESSAGE  //TODO
+enum AttachmentType { //TODO ALL TYPES
+	PHOTO,
+	AUDIO,
+	WALL,
+	VOICE_MESSAGE,
+	CALL,
+	STICKER,
+	FORWARDED_MESSAGE
 }
 
 class Message {
@@ -35,7 +36,7 @@ class Message {
 	public static Message setMessage(JSONObject jsonObject) throws JSONException {
 		Message message;  //TODO REFACTOR
 
-		//TODO attachments
+		//TODO all attachments
 		JSONArray attachments = jsonObject.getJSONArray("attachments");
 		if (attachments.length() != 0) {
 			message = new Message(true);
@@ -53,7 +54,11 @@ class Message {
 
 						attachment.attachment = url;
 						break;
-					//TODO ALL OTHERS
+					case "audio":
+						attachment.attachmentType = AttachmentType.AUDIO;
+						JSONObject audio = attachments.getJSONObject(i).getJSONObject("audio");
+						String titleAndArtist = "title{" + audio.getString("title") + "}artist{" + audio.getString("artist") + "}";
+						attachment.attachment = titleAndArtist;
 
 				}
 
