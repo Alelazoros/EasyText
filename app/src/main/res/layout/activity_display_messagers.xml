@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".DisplayMessages.AllDialogs"
+        tools:context=".AllMessages.AllDialogs"
         android:background="@color/colorWhite"
 >
     <androidx.appcompat.widget.Toolbar
@@ -23,7 +23,7 @@
             android:id="@+id/refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".DisplayMessages.AllDialogs"
+            tools:context=".AllMessages.AllDialogs"
     >
         <androidx.recyclerview.widget.RecyclerView
                 tools:listitem="@android:layout/simple_list_item_2"

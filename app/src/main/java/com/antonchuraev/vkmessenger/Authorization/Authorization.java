@@ -8,7 +8,7 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import com.antonchuraev.vkmessenger.DisplayMessages.AllDialogs;
+import com.antonchuraev.vkmessenger.AllMessages.AllDialogs;
 import com.antonchuraev.vkmessenger.MyClasses.VKUser.VKUserAccount;
 import com.antonchuraev.vkmessenger.R;
 import com.vk.api.sdk.VK;
@@ -71,7 +71,7 @@ public class Authorization extends AppCompatActivity {
             @Override
             public void onLogin(@NotNull VKAccessToken vkAccessToken) {
                 // User passed authorization
-                Log.d(getResources().getString(R.string.app_name), " // User passed authorization vkAccessToken == " + vkAccessToken.getAccessToken());
+                Log.d(getResources().getString(R.string.app_name), " // User passed authorization ");
 
                 VKUserAccount vkUserAccount = new VKUserAccount(vkAccessToken.getAccessToken(),vkAccessToken.getUserId());
                 vkUserAccount.save(getApplicationContext());

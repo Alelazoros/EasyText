@@ -12,13 +12,13 @@
             android:roundIcon="@mipmap/logo_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".DisplayMessages.FullDialog.FullDialog">
+        <activity android:name=".Dialog.FullDialog">
         </activity>
-        <activity android:name=".DisplayMessages.Adapter.MyRecyclerAllDialogsAdapter">
+        <activity android:name=".AllMessages.Adapter.MyRecyclerAllDialogsAdapter">
         </activity>
         <activity android:name=".Authorization.Authorization">
         </activity>
-        <activity android:name=".DisplayMessages.AllDialogs">
+        <activity android:name=".AllMessages.AllDialogs">
         </activity>
         <activity android:name=".Authorization.MainActivity">
             <intent-filter>

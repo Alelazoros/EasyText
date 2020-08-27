@@ -1,4 +1,4 @@
-package com.antonchuraev.vkmessenger.DisplayMessages.DialogsList;
+package com.antonchuraev.vkmessenger.MyClasses.Database;
 
 import android.icu.text.Transliterator;
 import org.json.JSONArray;
@@ -57,20 +57,5 @@ public class Database {
 	}
 
 
-}
-
-class DatabaseFormat {
-	String name;
-	String photoURL;
-	boolean online;
-
-	@Override
-	public String toString() {
-		return "DatabaseFormat{" +
-				"name='" + name + '\'' +
-				", photoURL='" + photoURL + '\'' +
-				", online=" + online +
-				'}';
-	}
 }
 

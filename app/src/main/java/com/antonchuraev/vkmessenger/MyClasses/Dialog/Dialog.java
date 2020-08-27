@@ -1,4 +1,4 @@
-package com.antonchuraev.vkmessenger.DisplayMessages.DialogsList;
+package com.antonchuraev.vkmessenger.MyClasses.Dialog;
 
 import java.io.Serializable;
 

@@ -1,4 +1,4 @@
-package com.antonchuraev.vkmessenger.DisplayMessages.Adapter;
+package com.antonchuraev.vkmessenger.AllMessages.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.Dialog;
-import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.DialogList;
+import com.antonchuraev.vkmessenger.MyClasses.Dialog.Dialog;
+import com.antonchuraev.vkmessenger.MyClasses.Dialog.DialogList;
 import com.antonchuraev.vkmessenger.R;
 import com.squareup.picasso.Picasso;
 import org.jetbrains.annotations.NotNull;

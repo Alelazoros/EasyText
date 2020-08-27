@@ -1,5 +1,7 @@
-package com.antonchuraev.vkmessenger.DisplayMessages.DialogsList;
+package com.antonchuraev.vkmessenger.MyClasses.Dialog;
 
+import com.antonchuraev.vkmessenger.MyClasses.Database.Database;
+import com.antonchuraev.vkmessenger.MyClasses.Database.DatabaseFormat;
 import com.antonchuraev.vkmessenger.R;
 import org.json.JSONArray;
 import org.json.JSONException;

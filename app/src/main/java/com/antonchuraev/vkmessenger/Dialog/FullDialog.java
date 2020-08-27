@@ -1,4 +1,4 @@
-package com.antonchuraev.vkmessenger.DisplayMessages.FullDialog;
+package com.antonchuraev.vkmessenger.Dialog;
 
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -6,7 +6,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.Dialog;
+import com.antonchuraev.vkmessenger.Dialog.Adapter.MyFullDialogAdapter;
+import com.antonchuraev.vkmessenger.MyClasses.Dialog.Dialog;
+import com.antonchuraev.vkmessenger.MyClasses.Message.Message;
 import com.antonchuraev.vkmessenger.R;
 import com.squareup.picasso.Picasso;
 import com.vk.api.sdk.VK;

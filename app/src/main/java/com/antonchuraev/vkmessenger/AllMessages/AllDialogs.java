@@ -1,4 +1,4 @@
-package com.antonchuraev.vkmessenger.DisplayMessages;
+package com.antonchuraev.vkmessenger.AllMessages;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,11 +7,11 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import com.antonchuraev.vkmessenger.AllMessages.Adapter.MyRecyclerAllDialogsAdapter;
 import com.antonchuraev.vkmessenger.Authorization.Authorization;
-import com.antonchuraev.vkmessenger.DisplayMessages.Adapter.MyRecyclerAllDialogsAdapter;
-import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.Dialog;
-import com.antonchuraev.vkmessenger.DisplayMessages.DialogsList.DialogList;
-import com.antonchuraev.vkmessenger.DisplayMessages.FullDialog.FullDialog;
+import com.antonchuraev.vkmessenger.Dialog.FullDialog;
+import com.antonchuraev.vkmessenger.MyClasses.Dialog.Dialog;
+import com.antonchuraev.vkmessenger.MyClasses.Dialog.DialogList;
 import com.antonchuraev.vkmessenger.R;
 import com.vk.api.sdk.VK;
 import com.vk.api.sdk.VKApiCallback;
