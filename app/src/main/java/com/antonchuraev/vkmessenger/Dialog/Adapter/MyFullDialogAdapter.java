@@ -76,7 +76,6 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 				Attachment attachment = message.getAttachmentList().get(i);
 				if (attachment.attachment != null) {  //TODO PROCESSING ALL TYPES
 					String attachmentType = String.valueOf(attachment.attachmentType);
-					System.out.println(attachmentType);
 					switch (attachmentType) {
 						case "CALL":
 						case "AUDIO":
@@ -84,7 +83,7 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 							break;
 
 						case "PHOTO":
-							addImageView(constraintLayout, attachment, message.isYourMessage(), messageTextView);
+							addImageView(constraintLayout, attachment.attachment.toString(), message.isYourMessage(), messageTextView);
 							break;
 
 						case "LINK":
@@ -101,8 +100,8 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 						case "VOICE_MESSAGE":
 						case "FORWARDED_MESSAGE":
 						case "WALL":
-							System.out.println("ADASD " + attachment);
-							addAudioPlayer(constraintLayout, attachment);
+
+							parseWall((List) attachment.attachment, constraintLayout, message.isYourMessage());
 							break;
 					}
 
@@ -117,6 +116,20 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 		return view;
 	}
 
+	private void parseWall(List attachment, ConstraintLayout layout, boolean isYourText) {
+		TextView textView = null;
+		for (int i = 1; i < attachment.size(); i++) {
+			if (i == 1 && !attachment.get(i).equals("NULL TEXT")) {
+				textView = addTextViewWithText(layout, isYourText, attachment.get(i).toString());
+			}
+
+			if (i > 1) {
+				addImageView(layout, attachment.get(i).toString(), isYourText, textView);
+			}
+
+		}
+	}
+
 
 	private void addAudioPlayer(ConstraintLayout constraintLayout, Attachment attachment) {
 		//TODO ADD AUDIO PLAYER
@@ -128,9 +141,10 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 
 	}
 
-	private ImageView addImageView(ConstraintLayout layout, Attachment attachment, boolean isYourMessage, TextView messageTextView) {
-		ImageView imageView = getImageView(context, isYourMessage);
-		Picasso.get().load(attachment.attachment.toString()).into(imageView, new Callback() {
+	private ImageView addImageView(ConstraintLayout layout, String url, boolean isYourMessage, TextView messageTextView) {
+		ImageView imageView = getImageView(context);
+		System.out.println(url);
+		Picasso.get().load(url).into(imageView, new Callback() {
 			@Override
 			public void onSuccess() {
 				notifyDataSetChanged();
@@ -143,15 +157,20 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 		});
 		layout.addView(imageView);
 
-		setBias(isYourMessage, imageView);
+
+		constraintSet.clone(constraintLayout);
+		constraintSet.connect(imageView.getId(), ConstraintSet.LEFT, constraintLayout.getId(), ConstraintSet.LEFT);
+		constraintSet.connect(imageView.getId(), ConstraintSet.RIGHT, constraintLayout.getId(), ConstraintSet.RIGHT);
+		constraintSet.setHorizontalBias(imageView.getId(), isYourMessage ? 1f : 0F);
 		if (messageTextView != null) {
 			constraintSet.connect(imageView.getId(), ConstraintSet.TOP, messageTextView.getId(), ConstraintSet.BOTTOM, getDP(8));
 		}
+		constraintSet.applyTo(constraintLayout);
 
 		return imageView;
 	}
 
-	private ImageView getImageView(Context context, boolean isYourMessage) {
+	private ImageView getImageView(Context context) {
 		ImageView imageView = new ImageView(context);
 		imageView.setId(View.generateViewId());
 

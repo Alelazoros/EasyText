@@ -57,13 +57,21 @@ public class Message {
 
 					case "wall":
 						attachment.attachmentType = Attachment.AttachmentType.WALL;
-						String wall = new String();
-						String tittle = "null", text = "null";
-						List photoUrl = new LinkedList();
-						text = attachmentJSON.getJSONObject("wall").getString("text");
+						List added = new LinkedList<>();
+
 
 						if (attachmentJSON.getJSONObject("wall").has("from")) {
-							tittle = attachmentJSON.getJSONObject("wall").getJSONObject("from").getString("name");
+
+							added.add(attachmentJSON.getJSONObject("wall").getJSONObject("from").getString("name")); //TODO DONT WORK
+						} else {
+							added.add("NULL NAME");
+						}
+
+
+						if (attachmentJSON.getJSONObject("wall").has("text")) {
+							added.add("Запись со стены: \n" + attachmentJSON.getJSONObject("wall").getString("text"));
+						} else {
+							added.add("NULL TEXT");
 						}
 
 
@@ -73,15 +81,17 @@ public class Message {
 
 								if (jsonArray.getJSONObject(i).has("photo")) {
 									JSONArray photoArray = jsonArray.getJSONObject(i).getJSONObject("photo").getJSONArray("sizes");
-									photoUrl.add(photoArray.getJSONObject(photoArray.length() - 1).getString("url"));
+									added.add(photoArray.getJSONObject(photoArray.length() - 1).getString("url"));
 								}
 
 							}
+						} else {
+							added.add("NULL ATTACHMENT");
 						}
 
 
 						//TODO OTHER AUDIO?
-						attachment.attachment = "tittle{" + tittle + "}text{" + text + "photo{" + photoUrl.toString() + "}";
+						attachment.attachment = added;
 						break;
 				}
 
