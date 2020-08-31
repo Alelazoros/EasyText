@@ -4,8 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Message {
 	private String text;
@@ -17,10 +19,10 @@ public class Message {
 		if (hasAttachment) {
 			this.attachmentList = new LinkedList<>();
 		}
-
 	}
 
 	public Message() {
+		this.attachmentList = new LinkedList<>();
 	}
 
 	public static Message setMessage(JSONObject jsonObject) throws JSONException {
@@ -95,11 +97,30 @@ public class Message {
 						break;
 				}
 
+
 				message.getAttachmentList().add(attachment);
 			}
 
 		} else {
 			message = new Message();
+
+			//TODO
+			if (jsonObject.has("fwd_messages") && jsonObject.getJSONArray("fwd_messages").length() > 0) {
+				JSONArray fwdMessage = jsonObject.getJSONArray("fwd_messages");
+				Attachment attachment = new Attachment();
+				attachment.attachmentType = Attachment.AttachmentType.FORWARDED_MESSAGE;
+
+				List<Map> fwdMessagedList = new LinkedList();
+				for (int i = 0; i < fwdMessage.length(); i++) {
+					Map map = new LinkedHashMap();
+					map.put(fwdMessage.getJSONObject(i).getString("from_id"), fwdMessage.getJSONObject(i).getString("text"));
+					fwdMessagedList.add(map);
+				}
+
+				attachment.attachment = fwdMessagedList;
+				message.getAttachmentList().add(attachment);
+			}
+
 		}
 
 		message.text = jsonObject.getString("text");

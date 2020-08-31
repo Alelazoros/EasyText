@@ -20,8 +20,17 @@ import com.antonchuraev.vkmessenger.MyClasses.Message.Message;
 import com.antonchuraev.vkmessenger.R;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.vk.api.sdk.VK;
+import com.vk.api.sdk.VKApiCallback;
+import com.vk.api.sdk.requests.VKRequest;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MyFullDialogAdapter extends ArrayAdapter {
 	public static final String TAG = "EASY TEXT";
@@ -99,6 +108,11 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 						case "STICKER":
 						case "VOICE_MESSAGE":
 						case "FORWARDED_MESSAGE":
+
+							addForwardedMessage(constraintLayout, message.isYourMessage(), (List) attachment.attachment);
+
+							break;
+
 						case "WALL":
 
 							parseWall((List) attachment.attachment, constraintLayout, message.isYourMessage());
@@ -114,6 +128,126 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 
 
 		return view;
+	}
+
+	private void addForwardedMessage(ConstraintLayout constraintLayout, boolean yourMessage, List attachment) {
+		TextView title = addTextViewWithTitle(constraintLayout, yourMessage, "Пересланное сообщение");
+		setBias(yourMessage, title);
+
+		AtomicReference<TextView> holder = new AtomicReference<>();
+
+		constraintLayout.setBackground(context.getDrawable(yourMessage ? R.drawable.right_dialog : R.drawable.left_dialog));
+
+		ViewGroup.LayoutParams params = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+		constraintLayout.setLayoutParams(params); //TODO
+
+		for (int i = 0; i < attachment.size(); i++) {
+			Map map = (Map) attachment.get(i);
+
+			int finalI = i;
+			map.forEach((sender, text) -> {
+
+				TextView name = addForwardedMessageName(sender, yourMessage);
+				name.setText(name.getText() + ":");
+
+				constraintLayout.addView(name);
+
+				constraintSet.clone(constraintLayout);
+				if (finalI == 0) {
+					constraintSet.connect(name.getId(), ConstraintSet.TOP, title.getId(), ConstraintSet.BOTTOM, getDP(10));
+				} else {
+					constraintSet.connect(name.getId(), ConstraintSet.TOP, holder.get().getId(), ConstraintSet.BOTTOM);
+				}
+				constraintSet.applyTo(constraintLayout);
+
+				holder.set(name);
+
+
+				TextView textForwardedMessage = addForwardedMessageText(text, yourMessage);
+				constraintLayout.addView(textForwardedMessage);
+
+				constraintSet.clone(constraintLayout);
+
+				constraintSet.connect(textForwardedMessage.getId(), ConstraintSet.TOP, holder.get().getId(), ConstraintSet.TOP);
+				if (yourMessage) {
+					constraintSet.connect(textForwardedMessage.getId(), ConstraintSet.RIGHT, constraintLayout.getId(), ConstraintSet.RIGHT);
+					//constraintSet.connect(name.getId(), ConstraintSet.RIGHT, textForwardedMessage.getId(), ConstraintSet.LEFT , getDP(10));
+				}
+				constraintSet.applyTo(constraintLayout);
+
+
+			});
+
+		}
+
+	}
+
+	private TextView addForwardedMessageText(Object text, Boolean yourMessage) {
+		TextView textView = new TextView(context);
+		textView.setText(text.toString());
+		textView.setId(View.generateViewId());
+		//textView.setBackground(context.getDrawable(yourMessage ? R.drawable.right_dialog : R.drawable.left_dialog));
+		textView.setTextColor(Color.BLACK);
+		textView.setTextSize(16);
+		final int paddingVertical = getDP(13);
+		final int paddingHorizontal = getDP(8);
+		textView.setPadding(paddingVertical, paddingHorizontal, paddingVertical, paddingHorizontal);
+
+		return textView;
+	}
+
+	private TextView addForwardedMessageName(Object sender, Boolean yourMessage) {
+		TextView textView = new TextView(context);
+		VK.execute(new VKRequest("users.get").addParam("user_ids", sender.toString()).addParam("fields", "photo_200"), new VKApiCallback<JSONObject>() {
+			@Override
+			public void success(JSONObject jsonObject) {
+
+				try {
+					JSONArray response = jsonObject.getJSONArray("response");
+					JSONObject item = response.getJSONObject(0);
+
+					String name = item.getString("first_name") + " " + item.getString("last_name");
+					textView.setText(name);
+
+
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+
+
+			@Override
+			public void fail(@NotNull Exception e) {
+
+			}
+		});
+		textView.setId(View.generateViewId());
+		//textView.setBackground(context.getDrawable(yourMessage ? R.drawable.right_dialog : R.drawable.left_dialog));
+		textView.setTextColor(Color.BLACK);
+		textView.setTextSize(16);
+		final int paddingVertical = getDP(13);
+		final int paddingHorizontal = getDP(8);
+		textView.setPadding(paddingVertical, paddingHorizontal, paddingVertical, paddingHorizontal);
+
+
+		return textView;
+	}
+
+	private TextView addTextViewWithTitle(ConstraintLayout constraintLayout, boolean yourMessage, String frwMessageTitle) {
+		TextView title = new TextView(context);
+		title.setText(frwMessageTitle);
+		title.setId(View.generateViewId());
+		title.setBackground(context.getDrawable(yourMessage ? R.drawable.right_dialog : R.drawable.left_dialog));
+		title.setTextColor(Color.BLACK);
+		title.setTextSize(20);
+		final int paddingVertical = getDP(13);
+		final int paddingHorizontal = getDP(8);
+		title.setPadding(paddingVertical, paddingHorizontal, paddingVertical, paddingHorizontal);
+
+		constraintLayout.addView(title);
+
+		return title;
 	}
 
 	private void parseWall(List attachment, ConstraintLayout layout, boolean isYourText) {
@@ -143,7 +277,6 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 
 	private ImageView addImageView(ConstraintLayout layout, String url, boolean isYourMessage, TextView messageTextView) {
 		ImageView imageView = getImageView(context);
-		System.out.println(url);
 		Picasso.get().load(url).into(imageView, new Callback() {
 			@Override
 			public void onSuccess() {
