@@ -59,7 +59,7 @@ public class DialogList {
 						}
 						break;
 				}
-				dialog.setReceiverId(peer.getLong("local_id"));
+				dialog.setReceiverId(peer.getLong("id")); //TODO ERROR?
 
 				//set all from "last_message"
 				JSONObject lastMessage = items.getJSONObject(i).getJSONObject("last_message");

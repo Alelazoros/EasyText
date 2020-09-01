@@ -41,6 +41,7 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 
 	ConstraintLayout constraintLayout;
 	ConstraintSet constraintSet;
+	private float textSize = 18;
 
 	public MyFullDialogAdapter(@NonNull Context context, List messages) {
 		super(context, R.layout.activity_my_full_dialog_list_adapter, messages);
@@ -87,8 +88,17 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 					String attachmentType = String.valueOf(attachment.attachmentType);
 					switch (attachmentType) {
 						case "CALL":
+							TextView call = addTextViewWithText(constraintLayout, message.isYourMessage(), "Звонок:");
+							call.setTextColor(context.getColor(R.color.colorPrimary));
+							call.setTextSize(textSize);
+
+							break;
+
 						case "AUDIO":
-							addAudioPlayer(constraintLayout, attachment);
+							TextView audio = addAudioPlayer(constraintLayout, message.isYourMessage(), attachment);
+							audio.setTextColor(context.getColor(R.color.colorPrimary));
+							audio.setTextSize(textSize);
+
 							break;
 
 						case "PHOTO":
@@ -107,9 +117,14 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 
 						case "STICKER":
 						case "VOICE_MESSAGE":
+							TextView voice = addTextViewWithText(constraintLayout, message.isYourMessage(), "Голосовое сообщение");
+							voice.setTextColor(context.getColor(R.color.colorPrimary));
+							voice.setTextSize(textSize);
+
+							break;
 						case "FORWARDED_MESSAGE":
 
-							addForwardedMessage(constraintLayout, message.isYourMessage(), (List) attachment.attachment);
+							addForwardedMessage(constraintLayout, message.isYourMessage(), (List) attachment.attachment, messageTextView);
 
 							break;
 
@@ -130,17 +145,16 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 		return view;
 	}
 
-	private void addForwardedMessage(ConstraintLayout constraintLayout, boolean yourMessage, List attachment) {
-		TextView title = addTextViewWithTitle(constraintLayout, yourMessage, "Пересланное сообщение");
+	private void addForwardedMessage(ConstraintLayout constraintLayout, boolean yourMessage, List attachment, TextView messageTextView) {
+		TextView title = addTextViewWithTitle(constraintLayout, yourMessage, "Пересланное сообщение:");
+
+		title.setTextColor(context.getColor(R.color.colorPrimary));
 		setBias(yourMessage, title);
 
 		AtomicReference<TextView> holder = new AtomicReference<>();
 
 		constraintLayout.setBackground(context.getDrawable(yourMessage ? R.drawable.right_dialog : R.drawable.left_dialog));
 
-		ViewGroup.LayoutParams params = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-		constraintLayout.setLayoutParams(params); //TODO
 
 		for (int i = 0; i < attachment.size(); i++) {
 			Map map = (Map) attachment.get(i);
@@ -148,33 +162,50 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 			int finalI = i;
 			map.forEach((sender, text) -> {
 
-				TextView name = addForwardedMessageName(sender, yourMessage);
-				name.setText(name.getText() + ":");
-
-				constraintLayout.addView(name);
-
-				constraintSet.clone(constraintLayout);
-				if (finalI == 0) {
-					constraintSet.connect(name.getId(), ConstraintSet.TOP, title.getId(), ConstraintSet.BOTTOM, getDP(10));
-				} else {
-					constraintSet.connect(name.getId(), ConstraintSet.TOP, holder.get().getId(), ConstraintSet.BOTTOM);
-				}
-				constraintSet.applyTo(constraintLayout);
-
-				holder.set(name);
-
-
 				TextView textForwardedMessage = addForwardedMessageText(text, yourMessage);
 				constraintLayout.addView(textForwardedMessage);
 
+				TextView name = addForwardedMessageName(sender, yourMessage);
+				name.setText(name.getText() + ":");
+				constraintLayout.addView(name);
 				constraintSet.clone(constraintLayout);
 
-				constraintSet.connect(textForwardedMessage.getId(), ConstraintSet.TOP, holder.get().getId(), ConstraintSet.TOP);
-				if (yourMessage) {
-					constraintSet.connect(textForwardedMessage.getId(), ConstraintSet.RIGHT, constraintLayout.getId(), ConstraintSet.RIGHT);
-					//constraintSet.connect(name.getId(), ConstraintSet.RIGHT, textForwardedMessage.getId(), ConstraintSet.LEFT , getDP(10));
+				if (finalI == 0) {
+
+					if (messageTextView != null) {
+						constraintSet.connect(title.getId(), ConstraintSet.TOP, messageTextView.getId(), ConstraintSet.BOTTOM);
+					}
+
+					constraintSet.connect(name.getId(), ConstraintSet.TOP, title.getId(), ConstraintSet.BOTTOM);
+
+					if (yourMessage) {
+						constraintSet.connect(name.getId(), ConstraintSet.RIGHT, title.getId(), ConstraintSet.RIGHT);
+					} else {
+						constraintSet.connect(name.getId(), ConstraintSet.LEFT, title.getId(), ConstraintSet.LEFT);
+					}
+
+				} else {
+					constraintSet.connect(name.getId(), ConstraintSet.TOP, holder.get().getId(), ConstraintSet.BOTTOM);
+
+					if (yourMessage) {
+						constraintSet.connect(name.getId(), ConstraintSet.RIGHT, holder.get().getId(), ConstraintSet.RIGHT);
+					} else {
+						constraintSet.connect(name.getId(), ConstraintSet.LEFT, holder.get().getId(), ConstraintSet.LEFT);
+					}
+
+
 				}
+
+				constraintSet.connect(textForwardedMessage.getId(), ConstraintSet.TOP, name.getId(), ConstraintSet.BOTTOM);
+
+				if (yourMessage) {
+					constraintSet.connect(textForwardedMessage.getId(), ConstraintSet.RIGHT, name.getId(), ConstraintSet.RIGHT);
+				} else {
+					constraintSet.connect(textForwardedMessage.getId(), ConstraintSet.LEFT, name.getId(), ConstraintSet.LEFT);
+				}
+
 				constraintSet.applyTo(constraintLayout);
+				holder.set(textForwardedMessage);
 
 
 			});
@@ -207,7 +238,7 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 					JSONArray response = jsonObject.getJSONArray("response");
 					JSONObject item = response.getJSONObject(0);
 
-					String name = item.getString("first_name") + " " + item.getString("last_name");
+					String name = item.getString("first_name") + " " + item.getString("last_name") + ":";
 					textView.setText(name);
 
 
@@ -265,14 +296,17 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 	}
 
 
-	private void addAudioPlayer(ConstraintLayout constraintLayout, Attachment attachment) {
+	private TextView addAudioPlayer(ConstraintLayout constraintLayout, boolean yourMessage, Attachment attachment) {
 		//TODO ADD AUDIO PLAYER
-		TextView textView = new TextView(context);
-		textView.setText(attachment.toString());
-		textView.setId(View.generateViewId());
+		String text = attachment.attachment.toString();
+		text = "Аудиозапись:\n" + text.substring(text.lastIndexOf("st") + 3, text.lastIndexOf("}")) + " - " + text.substring(text.indexOf("tle") + 4, text.indexOf("ar") - 1);
+
+		TextView textView = getCustomTextView(context, yourMessage, text);
 
 		constraintLayout.addView(textView);
+		setBias(yourMessage, textView);
 
+		return textView;
 	}
 
 	private ImageView addImageView(ConstraintLayout layout, String url, boolean isYourMessage, TextView messageTextView) {

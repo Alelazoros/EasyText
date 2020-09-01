@@ -139,18 +139,8 @@ public class FullDialog extends AppCompatActivity {
         listView = findViewById(R.id.list_view_messages);
         photo = findViewById(R.id.full_dialog_photo);
 
-        String type = String.valueOf(dialog.getType());
-        switch (type) {
-            case "CHAT":
-                id = Long.parseLong("2000000000" + dialog.getReceiverId());
-                break;
-            case "USER":
-                id = dialog.getReceiverId();
-                break;
-            case "GROUP":
-                id = dialog.getReceiverId() * (-1);
-                break;
-        }
+
+        id = dialog.getReceiverId();
 
         inputMessage = findViewById(R.id.input_text_message);
 

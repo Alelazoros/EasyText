@@ -17,9 +17,10 @@ public class Attachment {
 		AUDIO,
 		LINK,
 		WALL, //TODO VIDEO
-		VOICE_MESSAGE, //TODO СДЕАЛЬБ ПРОСЛУШИВАНИЕ НО НЕ ОТПРАВЛЕНИЕ
+		VOICE_MESSAGE, //TODO СДЕЛАТЬ ПРОСЛУШИВАНИЕ НО НЕ ОТПРАВЛЕНИЕ
 		CALL, //TODO INCOMING
 		STICKER, //TODO CANT FIND
 		FORWARDED_MESSAGE //TODO ПЕРЕСЛАННОЕ СООБЩЕНИЕ
+		//TODO ФАЙЛ
 	}
 }

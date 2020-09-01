@@ -95,6 +95,17 @@ public class Message {
 						//TODO OTHER AUDIO?
 						attachment.attachment = added;
 						break;
+
+					case "call":
+						attachment.attachmentType = Attachment.AttachmentType.CALL;
+						attachment.attachment = "ЗВОНОК";
+						//TODO CALL
+						break;
+					case "audio_message":
+						attachment.attachmentType = Attachment.AttachmentType.VOICE_MESSAGE;
+						attachment.attachment = "ГОЛОСОВОЕ";
+						//TODO "audio_message"
+						break;
 				}
 
 
