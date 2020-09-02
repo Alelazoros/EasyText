@@ -1,9 +1,13 @@
 package com.antonchuraev.vkmessenger.Dialog;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import com.antonchuraev.vkmessenger.Dialog.Adapter.MyFullDialogAdapter;
@@ -36,7 +40,7 @@ public class FullDialog extends AppCompatActivity {
 
     ImageView photo;
     EditText inputMessage;
-    ImageButton sendMessage;
+
     private long id;
     private int offset = 0;
 
@@ -80,6 +84,31 @@ public class FullDialog extends AppCompatActivity {
 
             }
         });
+
+        listView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(inputMessage.getWindowToken(), 0);
+                return false;
+            }
+        });
+
+        inputMessage.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (event.getRawX() >= (inputMessage.getRight() - (inputMessage.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width() * 2))) {
+                    //pressed drawable
+                    if (!inputMessage.getText().toString().equals("")) {
+                        Log.d(TAG, "SEND MESSAGE:" + inputMessage.getText());
+                        VKSendMessage(inputMessage.getText().toString());
+                    }
+                    return true;
+                }
+            }
+            return false;
+        });
+
     }
 
     private void VKSendMessage(String text) {
@@ -87,10 +116,23 @@ public class FullDialog extends AppCompatActivity {
             @Override
             public void fail(@NotNull Exception e) {
                 e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Сообщение не отправлено", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void success(JSONObject jsonObject) {
+                Log.d(TAG, "SUCCESS SEND id=" + id);
+                //TODO ADD IN LIST
+                Message sendedMessage = new Message();
+                sendedMessage.setText(inputMessage.getText().toString());
+                sendedMessage.setYourMessage(true);
+
+                //TODO
+                RequestMessages(offset);
+                listView.onRestoreInstanceState(state);
+
+                inputMessage.getText().clear();
+
 
             }
         });
@@ -148,6 +190,7 @@ public class FullDialog extends AppCompatActivity {
 
         myFullDialogAdapter = new MyFullDialogAdapter(getApplicationContext(), messages);
         listView.setAdapter(myFullDialogAdapter);
+
     }
 
 

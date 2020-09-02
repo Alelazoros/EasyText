@@ -35,6 +35,8 @@
             tools:listitem="@android:layout/simple_list_item_2"
             android:stackFromBottom="true"
 
+            android:divider="@null"
+
             android:background="@color/colorWhite"
 
             android:layout_width="match_parent"
@@ -49,10 +51,14 @@
 
     <EditText
             android:layout_width="match_parent"
+
+            android:drawableRight="@drawable/ic_send"
+
             android:layout_height="wrap_content"
             android:background="@drawable/square_frame"
             android:paddingLeft="15dp"
-            android:paddingRight="35dp"
+            android:paddingRight="15dp"
+
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:hint="Сообщение"

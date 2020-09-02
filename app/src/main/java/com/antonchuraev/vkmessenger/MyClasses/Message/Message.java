@@ -156,6 +156,18 @@ public class Message {
 		return yourMessage;
 	}
 
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public void setAttachmentList(List<Attachment> attachmentList) {
+		this.attachmentList = attachmentList;
+	}
+
+	public void setYourMessage(boolean yourMessage) {
+		this.yourMessage = yourMessage;
+	}
+
 	@Override
 	public String toString() {
 		return "Message{" +
