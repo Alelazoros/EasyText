@@ -2,7 +2,6 @@ package com.antonchuraev.vkmessenger.Dialog;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -29,6 +28,7 @@ import java.util.Random;
 
 
 public class FullDialog extends AppCompatActivity {
+    private final int LAYOUT = R.layout.activity_full_dialog;
 
     private static final String TAG = "EASY TEXT";
     androidx.appcompat.widget.Toolbar toolbar;
@@ -45,12 +45,11 @@ public class FullDialog extends AppCompatActivity {
     private int offset = 0;
 
     private boolean endReached = false;
-    Parcelable state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_full_dialog);
+        setContentView(LAYOUT);
 
         initialize();
 
@@ -72,10 +71,9 @@ public class FullDialog extends AppCompatActivity {
                 if (!view.canScrollVertically(-1) && !endReached) {
                     Log.d(TAG, "END REACHED");
                     endReached = true;
-
                     RequestMessages(offset);
 
-                    listView.onRestoreInstanceState(state);
+
                 }
             }
 
@@ -109,6 +107,7 @@ public class FullDialog extends AppCompatActivity {
             return false;
         });
 
+
     }
 
     private void VKSendMessage(String text) {
@@ -127,13 +126,10 @@ public class FullDialog extends AppCompatActivity {
                 sendedMessage.setText(inputMessage.getText().toString());
                 sendedMessage.setYourMessage(true);
 
-                //TODO
-                RequestMessages(offset);
-                listView.onRestoreInstanceState(state);
+                messages.add(0, sendedMessage);
+                myFullDialogAdapter.notifyDataSetChanged();
 
                 inputMessage.getText().clear();
-
-
             }
         });
     }
@@ -156,8 +152,7 @@ public class FullDialog extends AppCompatActivity {
                     offset += 20;
                     endReached = false;
 
-                    state = listView.onSaveInstanceState();
-
+                    listView.smoothScrollToPosition(45);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -192,9 +187,6 @@ public class FullDialog extends AppCompatActivity {
         listView.setAdapter(myFullDialogAdapter);
 
     }
-
-
-
 
 
     @Override

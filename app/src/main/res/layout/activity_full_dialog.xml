@@ -35,6 +35,9 @@
             tools:listitem="@android:layout/simple_list_item_2"
             android:stackFromBottom="true"
 
+            android:transcriptMode="normal"
+            android:listSelector="@android:color/transparent"
+
             android:divider="@null"
 
             android:background="@color/colorWhite"

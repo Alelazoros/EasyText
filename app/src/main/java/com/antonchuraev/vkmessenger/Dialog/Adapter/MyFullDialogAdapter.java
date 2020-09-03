@@ -132,6 +132,11 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 
 							parseWall((List) attachment.attachment, constraintLayout, message.isYourMessage());
 							break;
+						case "VIDEO":
+							TextView video = addTextViewWithText(constraintLayout, message.isYourMessage(), "ВИДЕО");
+							video.setTextColor(context.getColor(R.color.colorPrimary));
+							video.setTextSize(textSize);
+							break;
 					}
 
 
@@ -155,6 +160,8 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 
 		constraintLayout.setBackground(context.getDrawable(yourMessage ? R.drawable.right_dialog : R.drawable.left_dialog));
 
+		//ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT , ViewGroup.LayoutParams.WRAP_CONTENT);
+		//constraintLayout.setLayoutParams(params);
 
 		for (int i = 0; i < attachment.size(); i++) {
 			Map map = (Map) attachment.get(i);
@@ -353,8 +360,8 @@ public class MyFullDialogAdapter extends ArrayAdapter {
 
 	private void setBias(Boolean isYourMessage, View view) {
 		constraintSet.clone(constraintLayout);
-		constraintSet.connect(view.getId(), ConstraintSet.LEFT, constraintLayout.getId(), ConstraintSet.LEFT);
-		constraintSet.connect(view.getId(), ConstraintSet.RIGHT, constraintLayout.getId(), ConstraintSet.RIGHT);
+		constraintSet.connect(view.getId(), ConstraintSet.START, constraintLayout.getId(), ConstraintSet.START);
+		constraintSet.connect(view.getId(), ConstraintSet.END, constraintLayout.getId(), ConstraintSet.END);
 		constraintSet.setHorizontalBias(view.getId(), isYourMessage ? 1f : 0F);
 		constraintSet.applyTo(constraintLayout);
 	}

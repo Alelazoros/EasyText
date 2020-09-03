@@ -106,6 +106,10 @@ public class Message {
 						attachment.attachment = "ГОЛОСОВОЕ";
 						//TODO "audio_message"
 						break;
+					case "video":
+						attachment.attachmentType = Attachment.AttachmentType.VIDEO;
+						attachment.attachment = "ВИДЕО";
+						break;
 				}
 
 
